@@ -52,7 +52,7 @@ def setup_logging(app):
         
         # File logger with rotation
         file_handler = RotatingFileHandler(
-            'logs/vistwave.log',
+            'logs/vistawave.log',
             maxBytes=10485760,  # 10MB
             backupCount=10
         )
@@ -63,7 +63,7 @@ def setup_logging(app):
         app.logger.addHandler(file_handler)
         
         app.logger.setLevel(logging.INFO)
-        app.logger.info('VistWave startup')
+        app.logger.info('vistawave startup')
 
 
 def register_error_handlers(app):
