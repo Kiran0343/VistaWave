@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bad Request - VistWave</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+      .error-page {
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+        text-align: center;
+      }
+      .error-content h1 {
+        font-size: 6rem;
+        margin: 0;
+        color: var(--accent);
+      }
+      .error-content p {
+        font-size: 1.2rem;
+        margin: 1rem 0;
+      }
+      .error-content a {
+        display: inline-block;
+        margin-top: 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-page">
+      <div class="error-content">
+        <h1>400</h1>
+        <h2>Bad Request</h2>
+        <p>Your request could not be processed. Please check and try again.</p>
+        <a href="/" class="btn">Back to Home</a>
+      </div>
+    </div>
+  </body>
+</html>

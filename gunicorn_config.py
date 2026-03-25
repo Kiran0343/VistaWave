@@ -1,0 +1,11 @@
+bind = "0.0.0.0:5000"
+workers = 4
+worker_class = "sync"
+max_requests = 1000
+max_requests_jitter = 50
+timeout = 60
+keepalive = 5
+accesslog = "logs/access.log"
+errorlog = "logs/error.log"
+loglevel = "info"
+access_log_format = '%(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s" %(D)s'
