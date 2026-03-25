@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VistWave Consulting LLC</title>
+    <meta
+      name="description"
+      content="VistWave Consulting LLC helps organizations modernize operations, execute strategy, and unlock measurable growth."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a href="#top" class="brand" aria-label="VistWave home">
+          <span class="brand-mark">VW</span>
+          <span class="brand-text">VistWave Consulting LLC</span>
+        </a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+          Menu
+        </button>
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+          <a href="#services">Services</a>
+          <a href="#process">Process</a>
+          <a href="#results">Results</a>
+          <a href="#insights">Insights</a>
+          <a href="#contact" class="btn btn-small">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-bg-shape hero-bg-shape-1" aria-hidden="true"></div>
+        <div class="hero-bg-shape hero-bg-shape-2" aria-hidden="true"></div>
+        <div class="container hero-grid">
+          <div class="hero-content reveal">
+            <p class="eyebrow">Advisory + Execution Partner</p>
+            <h1>We turn bold strategy into operational reality.</h1>
+            <p class="lead">
+              VistWave helps leadership teams scale with confidence through business
+              transformation, digital modernization, and data-driven decision systems.
+            </p>
+            <div class="hero-actions">
+              <a href="#contact" class="btn">Book a Discovery Call</a>
+              <a href="#services" class="btn btn-secondary">Explore Capabilities</a>
+            </div>
+          </div>
+          <aside class="hero-panel reveal" aria-label="Consulting highlights">
+            <h2>Where we create value</h2>
+            <ul>
+              <li>
+                <span>Strategy</span>
+                <p>Roadmaps aligned to business outcomes and board priorities.</p>
+              </li>
+              <li>
+                <span>Operations</span>
+                <p>Lean process redesign to improve quality, speed, and margin.</p>
+              </li>
+              <li>
+                <span>Technology</span>
+                <p>Practical systems architecture and digital delivery governance.</p>
+              </li>
+            </ul>
+          </aside>
+        </div>
+      </section>
+
+      <section class="stats container reveal" id="results">
+        <article>
+          <h3 data-counter="12">0</h3>
+          <p>Avg. weeks to pilot launch</p>
+        </article>
+        <article>
+          <h3 data-counter="38">0</h3>
+          <p>Typical process efficiency gain (%)</p>
+        </article>
+        <article>
+          <h3 data-counter="97">0</h3>
+          <p>Stakeholder satisfaction score</p>
+        </article>
+        <article>
+          <h3 data-counter="220">0</h3>
+          <p>Teams supported globally</p>
+        </article>
+      </section>
+
+      <section class="section container" id="services">
+        <div class="section-head reveal">
+          <p class="eyebrow">Core Services</p>
+          <h2>Built like a modern consulting firm</h2>
+          <p>
+            From executive strategy to implementation support, we combine advisory depth
+            with hands-on delivery to move initiatives from slide decks into results.
+          </p>
+        </div>
+        <div class="card-grid">
+          <article class="service-card reveal">
+            <h3>Business Transformation</h3>
+            <p>
+              End-to-end transformation programs covering operating model design,
+              governance setup, and performance tracking.
+            </p>
+            <ul>
+              <li>Transformation office setup</li>
+              <li>PMO and execution cadence</li>
+              <li>KPI architecture and scorecards</li>
+            </ul>
+          </article>
+          <article class="service-card reveal">
+            <h3>Digital and Data Advisory</h3>
+            <p>
+              Data foundations and product roadmaps that prioritize value realization,
+              not technology for its own sake.
+            </p>
+            <ul>
+              <li>Data platform strategy</li>
+              <li>Analytics operating model</li>
+              <li>AI readiness and governance</li>
+            </ul>
+          </article>
+          <article class="service-card reveal">
+            <h3>Operational Excellence</h3>
+            <p>
+              Process design and change enablement to increase throughput and service
+              quality across critical workflows.
+            </p>
+            <ul>
+              <li>Process diagnostics</li>
+              <li>Capability assessments</li>
+              <li>Change and adoption plans</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      <section class="section split-section" id="process">
+        <div class="container split-grid">
+          <div class="reveal">
+            <p class="eyebrow">How We Operate</p>
+            <h2>A consulting model designed for momentum</h2>
+            <p>
+              We pair a senior-led advisory approach with delivery squads to reduce handoff
+              friction and keep transformation velocity high.
+            </p>
+          </div>
+          <ol class="timeline reveal">
+            <li>
+              <h3>Discover</h3>
+              <p>Rapid diagnostics, interviews, and baseline metrics in weeks 1-2.</p>
+            </li>
+            <li>
+              <h3>Design</h3>
+              <p>Prioritized initiatives, future-state architecture, and investment case.</p>
+            </li>
+            <li>
+              <h3>Deliver</h3>
+              <p>Agile implementation with milestone tracking and executive reporting.</p>
+            </li>
+            <li>
+              <h3>Embed</h3>
+              <p>Capability transfer, governance handover, and long-term value controls.</p>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="section container" id="insights">
+        <div class="section-head reveal">
+          <p class="eyebrow">Industry Focus</p>
+          <h2>Representative client environments</h2>
+        </div>
+        <div class="insight-grid">
+          <article class="insight-card reveal">
+            <h3>Healthcare</h3>
+            <p>Care operations optimization, patient journey redesign, and reporting strategy.</p>
+          </article>
+          <article class="insight-card reveal">
+            <h3>Financial Services</h3>
+            <p>Risk operating model upgrades, controls automation, and digital channels.</p>
+          </article>
+          <article class="insight-card reveal">
+            <h3>Technology</h3>
+            <p>Product-led operating models, revenue intelligence, and GTM acceleration.</p>
+          </article>
+          <article class="insight-card reveal">
+            <h3>Public Sector</h3>
+            <p>Citizen service modernization, program governance, and delivery assurance.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section testimonials">
+        <div class="container">
+          <div class="section-head reveal">
+            <p class="eyebrow">Client Voice</p>
+            <h2>What partners say</h2>
+          </div>
+          <div class="quote-grid">
+            <blockquote class="reveal">
+              "VistWave brought structure and pace to a complex transformation. Within one
+              quarter, our teams had a shared roadmap and clear ownership."
+              <cite>Chief Operations Officer, Enterprise Client</cite>
+            </blockquote>
+            <blockquote class="reveal">
+              "Their team was pragmatic, collaborative, and deeply analytical. We saw measurable
+              impact in process cycle time and customer satisfaction."
+              <cite>VP Strategy, Mid-Market Client</cite>
+            </blockquote>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="contact">
+        <div class="contact-grid">
+          <div class="reveal">
+            <p class="eyebrow">Get Started</p>
+            <h2>Let us shape your next growth chapter</h2>
+            <p>
+              Share your current priorities and we will map a practical engagement model.
+              Replace this with your exact contact workflow later.
+            </p>
+            <ul class="contact-list">
+              <li>Email: hello@vistwave.com</li>
+              <li>Phone: +1 (555) 012-3456</li>
+              <li>Location: Dallas, TX (Placeholder)</li>
+            </ul>
+          </div>
+          <form class="contact-form reveal" action="#" method="post">
+            <label>
+              Name
+              <input type="text" name="name" placeholder="Your name" required />
+            </label>
+            <label>
+              Work Email
+              <input type="email" name="email" placeholder="you@company.com" required />
+            </label>
+            <label>
+              Company
+              <input type="text" name="company" placeholder="Company name" />
+            </label>
+            <label>
+              Project Goals
+              <textarea name="goals" rows="4" placeholder="Tell us about your initiative"></textarea>
+            </label>
+            <button class="btn" type="submit">Submit Inquiry</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>© 2026 VistWave Consulting LLC. All rights reserved.</p>
+        <a href="#top">Back to top</a>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
