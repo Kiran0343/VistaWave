@@ -65,23 +65,16 @@ a {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.7rem;
+  gap: 0.45rem;
   font-weight: 700;
 }
 
-.brand-mark {
-  display: inline-grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 50%;
-  color: #fff;
-  font-weight: 800;
-  background: linear-gradient(135deg, var(--accent), var(--accent-2));
-}
-
-.brand-text {
-  font-size: 0.96rem;
+.brand-logo {
+  width: 170px !important;
+  min-width: 170px;
+  height: 80px !important;
+  max-width: 170px !important;
+  display: block;
 }
 
 .primary-nav {
@@ -724,8 +717,11 @@ textarea {
 }
 
 @media (max-width: 760px) {
-  .brand-text {
-    display: none;
+  .brand-logo {
+    width: 132px !important;
+    min-width: 132px;
+    max-width: 132px !important;
+    height: 62px !important;
   }
 
   .nav-toggle {

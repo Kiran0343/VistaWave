@@ -23,6 +23,8 @@ class Config:
     CACHE_TYPE = 'SimpleCache'
     CACHE_DEFAULT_TIMEOUT = 30
     RATELIMIT_HEADERS_ENABLED = True
+    FORMSPREE_STAFFING_ENDPOINT = os.environ.get('FORMSPREE_STAFFING_ENDPOINT', '')
+    FORMSPREE_APPLY_ENDPOINT = os.environ.get('FORMSPREE_APPLY_ENDPOINT', '')
 
 
 class DevelopmentConfig(Config):

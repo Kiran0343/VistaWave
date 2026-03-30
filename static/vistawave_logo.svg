@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" role="img" aria-label="vistawave Technology Staffing logo">
+  <defs>
+    <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1D9E75"/>
+      <stop offset="50%" stop-color="#185FA5"/>
+      <stop offset="100%" stop-color="#534AB7"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#1D9E75"/>
+      <stop offset="100%" stop-color="#534AB7"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="90" y="30" width="500" height="260" rx="20" fill="#0a0f1e" opacity="0.96"/>
+  <circle cx="214" cy="160" r="68" fill="none" stroke="url(#waveGrad)" stroke-width="2" opacity="0.45"/>
+  <circle cx="214" cy="160" r="54" fill="#111827"/>
+
+  <rect x="178" y="172" width="10" height="20" rx="5" fill="url(#iconGrad)" opacity="0.55"/>
+  <rect x="194" y="158" width="10" height="34" rx="5" fill="url(#iconGrad)" opacity="0.72"/>
+  <rect x="210" y="145" width="10" height="47" rx="5" fill="url(#iconGrad)" opacity="0.92"/>
+  <rect x="226" y="152" width="10" height="40" rx="5" fill="url(#iconGrad)" opacity="0.82"/>
+  <rect x="242" y="163" width="10" height="29" rx="5" fill="url(#iconGrad)" opacity="0.62"/>
+
+  <text x="214" y="136" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="url(#waveGrad)" letter-spacing="2">VW</text>
+  <text x="298" y="147" font-family="Georgia, serif" font-size="38" font-weight="700" fill="url(#waveGrad)">vistawave</text>
+  <text x="298" y="182" font-family="Arial, sans-serif" font-size="13" fill="#6b8cae" letter-spacing="4">TECHNOLOGY STAFFING</text>
+  <line x1="298" y1="198" x2="548" y2="198" stroke="url(#waveGrad)" stroke-width="1" opacity="0.5"/>
+  <text x="298" y="216" font-family="Arial, sans-serif" font-size="11" fill="#4a6080" letter-spacing="2">Connecting talent. Delivering results.</text>
+</svg>

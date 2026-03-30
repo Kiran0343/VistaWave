@@ -91,6 +91,40 @@ const applyForm = document.getElementById('apply-form');
 const applyStatus = document.getElementById('apply-status');
 const applyJobId = document.getElementById('apply-job-id');
 
+const submitToFormspree = async (endpoint, payload, extraMeta = {}) => {
+  const formData = new FormData();
+  Object.entries(payload).forEach(([key, value]) => {
+    if (Array.isArray(value)) {
+      formData.append(key, value.join(', '));
+      return;
+    }
+    formData.append(key, String(value ?? ''));
+  });
+
+  Object.entries(extraMeta).forEach(([key, value]) => {
+    formData.append(key, String(value));
+  });
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: { Accept: 'application/json' },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    let message = 'Form submission failed';
+    try {
+      const data = await response.json();
+      if (Array.isArray(data.errors) && data.errors[0]?.message) {
+        message = data.errors[0].message;
+      }
+    } catch (error) {
+      // Keep default error message.
+    }
+    throw new Error(message);
+  }
+};
+
 const setMetricValue = (el, value, formatter = (v) => String(v)) => {
   if (!el) return;
   el.textContent = formatter(value);
@@ -265,20 +299,27 @@ if (contactForm) {
       contactStatus.classList.remove('is-error', 'is-success');
     }
 
+    const formspreeEndpoint = (contactForm.dataset.formspreeEndpoint || '').trim();
+
     try {
-      const response = await fetch('/api/v1/staffing-request', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      if (formspreeEndpoint) {
+        await submitToFormspree(formspreeEndpoint, payload, {
+          form_type: 'staffing-request',
+        });
+      } else {
+        const response = await fetch('/api/v1/staffing-request', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit staffing request');
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit staffing request');
+        }
       }
 
       if (contactStatus) {
@@ -314,7 +355,7 @@ if (applyForm) {
         .filter(Boolean),
       linkedin_url: String(formData.get('linkedin_url') || '').trim(),
       resume_summary: String(formData.get('resume_summary') || '').trim(),
-      job_id: String(formData.get('job_id') || '').trim(),
+      job_id: String(formData.get('job_id') || '').trim() || 'general',
     };
 
     if (!payload.skills.length) {
@@ -330,20 +371,27 @@ if (applyForm) {
       applyStatus.classList.remove('is-error', 'is-success');
     }
 
+    const formspreeEndpoint = (applyForm.dataset.formspreeEndpoint || '').trim();
+
     try {
-      const response = await fetch('/api/v1/apply', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+      if (formspreeEndpoint) {
+        await submitToFormspree(formspreeEndpoint, payload, {
+          form_type: 'job-application',
+        });
+      } else {
+        const response = await fetch('/api/v1/apply', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit application');
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Failed to submit application');
+        }
       }
 
       if (applyStatus) {

@@ -1,0 +1,50 @@
+<svg width="100%" viewBox="0 0 680 320" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1D9E75"/>
+      <stop offset="50%" stop-color="#185FA5"/>
+      <stop offset="100%" stop-color="#534AB7"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1D9E75"/>
+      <stop offset="50%" stop-color="#185FA5"/>
+      <stop offset="100%" stop-color="#534AB7"/>
+    </linearGradient>
+    <linearGradient id="iconGrad" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="#1D9E75"/>
+      <stop offset="100%" stop-color="#534AB7"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background card -->
+  <rect x="90" y="30" width="500" height="260" rx="20" fill="#0a0f1e" opacity="0.96" style="fill:rgb(10, 15, 30);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.96;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Icon: VW monogram + wave shape -->
+  <!-- Outer circle ring -->
+  <circle cx="214" cy="160" r="68" fill="none" stroke="url(#waveGrad)" stroke-width="2" opacity="0.4" style="fill:none;color:rgb(0, 0, 0);stroke-width:2px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.4;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <!-- Inner circle -->
+  <circle cx="214" cy="160" r="54" fill="#111827" style="fill:rgb(17, 24, 39);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Wave bars inside circle (signal/tech feel) -->
+  <rect x="178" y="172" width="8" height="20" rx="4" fill="url(#iconGrad)" opacity="0.5" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="192" y="158" width="8" height="34" rx="4" fill="url(#iconGrad)" opacity="0.7" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.7;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="206" y="145" width="8" height="47" rx="4" fill="url(#iconGrad)" opacity="0.9" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.9;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="220" y="152" width="8" height="40" rx="4" fill="url(#iconGrad)" opacity="0.8" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.8;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+  <rect x="234" y="163" width="8" height="29" rx="4" fill="url(#iconGrad)" opacity="0.6" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.6;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- VW text inside circle -->
+  <text x="214" y="148" text-anchor="middle" dominant-baseline="central" font-family="Georgia, serif" font-size="11" font-weight="700" fill="url(#waveGrad)" letter-spacing="2" opacity="0.85" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.85;font-family:Georgia, serif;font-size:11px;font-weight:700;text-anchor:middle;dominant-baseline:central">VW</text>
+
+  <!-- Company name -->
+  <text x="298" y="148" dominant-baseline="central" font-family="Georgia, serif" font-size="38" font-weight="700" fill="url(#textGrad)" letter-spacing="1" style="stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Georgia, serif;font-size:38px;font-weight:700;text-anchor:start;dominant-baseline:central">vistawave</text>
+
+  <!-- Tagline -->
+  <text x="298" y="182" dominant-baseline="central" font-family="Arial, sans-serif" font-size="13" font-weight="400" fill="#6b8cae" letter-spacing="4" style="fill:rgb(107, 140, 174);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, sans-serif;font-size:13px;font-weight:400;text-anchor:start;dominant-baseline:central">TECHNOLOGY STAFFING</text>
+
+  <!-- Divider line with gradient -->
+  <line x1="298" y1="197" x2="548" y2="197" stroke="url(#waveGrad)" stroke-width="1" opacity="0.5" style="fill:rgb(0, 0, 0);color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:0.5;font-family:&quot;Anthropic Sans&quot;, -apple-system, &quot;system-ui&quot;, &quot;Segoe UI&quot;, sans-serif;font-size:16px;font-weight:400;text-anchor:start;dominant-baseline:auto"/>
+
+  <!-- Sub-tagline -->
+  <text x="298" y="216" dominant-baseline="central" font-family="Arial, sans-serif" font-size="11" fill="#4a6080" letter-spacing="2" style="fill:rgb(74, 96, 128);stroke:none;color:rgb(0, 0, 0);stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;opacity:1;font-family:Arial, sans-serif;font-size:11px;font-weight:400;text-anchor:start;dominant-baseline:central">Connecting talent. Delivering results.</text>
+
+</svg>

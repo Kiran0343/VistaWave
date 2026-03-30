@@ -1,7 +1,6 @@
 import os
 import json
 import logging
-import random
 import time
 from uuid import uuid4
 from datetime import datetime, timezone
@@ -93,7 +92,11 @@ def create_app(config_name=None):
     @app.route('/')
     def index():
         """Home page"""
-        return render_template('index.html')
+        return render_template(
+            'index.html',
+            formspree_staffing_endpoint=app.config.get('FORMSPREE_STAFFING_ENDPOINT', ''),
+            formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', '')
+        )
     
     @app.route('/health')
     @limiter.limit('120 per minute')
@@ -141,113 +144,149 @@ def init_extensions(app):
 
 
 def generate_sample_jobs():
-    """Create sample job postings for demonstration."""
+    """Create current open job postings."""
     jobs = [
         {
             'id': 'job_001',
-            'title': 'Senior Python Engineer',
-            'company': 'TechCorp',
-            'location': 'San Francisco, CA (Remote)',
+            'title': 'Senior Python Backend Engineer',
+            'company': 'Vistawave Client - FinTech',
+            'location': 'Dallas, TX (Hybrid)',
             'type': 'Contract-to-Hire',
             'experience_required': '5+',
-            'skills': ['Python', 'AWS', 'Docker', 'Kubernetes'],
-            'salary_range': '$120k-$160k',
-            'posted_date': '2026-03-22',
-            'description': 'Build scalable financial data pipeline systems.'
+            'skills': ['Python', 'FastAPI', 'AWS', 'PostgreSQL'],
+            'salary_range': '$135k-$165k',
+            'posted_date': '2026-03-26',
+            'description': 'Build high-throughput backend services for payments workflows.'
         },
         {
             'id': 'job_002',
-            'title': 'React Frontend Developer',
-            'company': 'CreativeScape',
-            'location': 'New York, NY',
-            'type': 'Contract',
-            'experience_required': '3+',
-            'skills': ['React', 'TypeScript', 'TailwindCSS', 'Redux'],
-            'salary_range': '$90k-$130k',
-            'posted_date': '2026-03-25',
-            'description': 'Lead frontend modernization of customer portal.'
+            'title': 'Senior React Frontend Engineer',
+            'company': 'Vistawave Client - HealthTech',
+            'location': 'Austin, TX (Remote)',
+            'type': 'Direct Hire',
+            'experience_required': '4+',
+            'skills': ['React', 'TypeScript', 'Next.js', 'GraphQL'],
+            'salary_range': '$125k-$150k',
+            'posted_date': '2026-03-27',
+            'description': 'Lead UI architecture for clinical workflow applications.'
         },
         {
             'id': 'job_003',
-            'title': 'DevOps Specialist',
-            'company': 'CloudWorks',
-            'location': 'Austin, TX (Remote)',
+            'title': 'Cloud DevOps Engineer',
+            'company': 'Vistawave Client - SaaS Platform',
+            'location': 'Remote (US)',
             'type': 'Direct Hire',
             'experience_required': '6+',
             'skills': ['Kubernetes', 'Terraform', 'AWS', 'CI/CD'],
-            'salary_range': '$130k-$170k',
-            'posted_date': '2026-03-20',
-            'description': 'Architect next-gen infrastructure platform.'
+            'salary_range': '$140k-$175k',
+            'posted_date': '2026-03-24',
+            'description': 'Own platform reliability, deployment automation, and observability.'
         },
         {
             'id': 'job_004',
-            'title': 'Data Engineer',
-            'company': 'AnalyticsHub',
-            'location': 'Boston, MA',
+            'title': 'Senior Data Engineer',
+            'company': 'Vistawave Client - Retail Analytics',
+            'location': 'Chicago, IL (Hybrid)',
             'type': 'Contract-to-Hire',
             'experience_required': '4+',
-            'skills': ['Python', 'Spark', 'Snowflake', 'dbt'],
-            'salary_range': '$110k-$150k',
-            'posted_date': '2026-03-23',
-            'description': 'Build modern data warehouse and ETL pipelines.'
+            'skills': ['Python', 'Spark', 'Snowflake', 'dbt', 'Airflow'],
+            'salary_range': '$130k-$158k',
+            'posted_date': '2026-03-25',
+            'description': 'Build enterprise data pipelines and modern analytics foundation.'
         },
         {
             'id': 'job_005',
             'title': 'QA Automation Engineer',
-            'company': 'TestFirst',
+            'company': 'Vistawave Client - E-commerce',
             'location': 'Seattle, WA (Remote)',
             'type': 'Contract',
             'experience_required': '3+',
             'skills': ['Selenium', 'Python', 'Jest', 'Playwright'],
-            'salary_range': '$85k-$120k',
-            'posted_date': '2026-03-24',
-            'description': 'Lead automated testing strategy and implementation.'
+            'salary_range': '$95k-$125k',
+            'posted_date': '2026-03-28',
+            'description': 'Expand end-to-end test automation for omnichannel checkout.'
+        },
+        {
+            'id': 'job_006',
+            'title': 'Machine Learning Engineer',
+            'company': 'Vistawave Client - Logistics AI',
+            'location': 'Atlanta, GA (Hybrid)',
+            'type': 'Direct Hire',
+            'experience_required': '5+',
+            'skills': ['Python', 'PyTorch', 'MLOps', 'AWS'],
+            'salary_range': '$150k-$185k',
+            'posted_date': '2026-03-29',
+            'description': 'Deploy demand forecasting and route optimization ML models.'
+        },
+        {
+            'id': 'job_007',
+            'title': 'Salesforce Developer',
+            'company': 'Vistawave Client - Professional Services',
+            'location': 'Remote (US)',
+            'type': 'Contract',
+            'experience_required': '4+',
+            'skills': ['Salesforce', 'Apex', 'LWC', 'Integration APIs'],
+            'salary_range': '$105k-$135k',
+            'posted_date': '2026-03-27',
+            'description': 'Implement CRM workflows and quote-to-cash automations.'
+        },
+        {
+            'id': 'job_008',
+            'title': 'Cybersecurity Analyst',
+            'company': 'Vistawave Client - Insurance',
+            'location': 'Phoenix, AZ (Hybrid)',
+            'type': 'Contract-to-Hire',
+            'experience_required': '4+',
+            'skills': ['SIEM', 'SOC', 'Threat Modeling', 'Incident Response'],
+            'salary_range': '$115k-$145k',
+            'posted_date': '2026-03-29',
+            'description': 'Strengthen SOC operations and response playbooks.'
         }
     ]
     return jobs
 
 
 def build_live_metrics(app):
-    """Generate dynamic staffing metrics for API and SSE consumers."""
+    """Generate staffing metrics for API and SSE consumers."""
     started_at = app.config['STARTED_AT_UTC']
     uptime_minutes = max(
         1,
         int((datetime.now(timezone.utc) - started_at).total_seconds() // 60)
     )
 
-    active_clients = random.randint(30, 84)
-    shortlisted_candidates = random.randint(180, 520)
+    active_requisitions = len(app.extensions['job_postings'])
+    qualified_candidates = 412
     data = {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'uptime_minutes': uptime_minutes,
-        'fill_rate': random.randint(86, 97),
-        'submission_to_interview_days': round(random.uniform(2.1, 6.8), 1),
-        'active_client_requisitions': active_clients,
-        'qualified_candidates': shortlisted_candidates,
-        'offer_acceptance_rate': random.randint(78, 96),
-        'time_to_fill_days': random.randint(9, 24),
+        'fill_rate': 94,
+        'submission_to_interview_days': 3.8,
+        'active_client_requisitions': active_requisitions,
+        'qualified_candidates': qualified_candidates,
+        'offer_acceptance_rate': 89,
+        'time_to_fill_days': 16,
         'recommendations': [
-            'Prioritize critical roles in cloud, data, and platform engineering.',
-            'Bundle contract-to-hire pipelines to reduce time-to-fill variance.',
-            'Use skill-based scorecards for faster shortlist approvals.'
+            'Prioritize roles with immediate delivery dependencies first.',
+            'Use blended contract-to-hire strategy for hard-to-fill niches.',
+            'Standardize interview scorecards to improve match quality.'
         ]
     }
     return data
 
 
 def build_talent_pool_snapshot():
-    """Create a synthetic real-time technology talent pool summary."""
+    """Create talent pool summary."""
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'categories': [
-            {'technology': 'Python', 'available': random.randint(40, 95), 'avg_experience_years': 6},
-            {'technology': 'Java', 'available': random.randint(35, 80), 'avg_experience_years': 7},
-            {'technology': 'React', 'available': random.randint(28, 72), 'avg_experience_years': 5},
-            {'technology': 'Node.js', 'available': random.randint(24, 64), 'avg_experience_years': 5},
-            {'technology': 'AWS', 'available': random.randint(32, 88), 'avg_experience_years': 7},
-            {'technology': 'Kubernetes', 'available': random.randint(22, 58), 'avg_experience_years': 6},
-            {'technology': 'DevOps', 'available': random.randint(26, 68), 'avg_experience_years': 7},
-            {'technology': 'Data Engineering', 'available': random.randint(20, 52), 'avg_experience_years': 6},
+            {'technology': 'Python', 'available': 84, 'avg_experience_years': 6},
+            {'technology': 'Java', 'available': 63, 'avg_experience_years': 7},
+            {'technology': 'React', 'available': 58, 'avg_experience_years': 5},
+            {'technology': 'Node.js', 'available': 49, 'avg_experience_years': 5},
+            {'technology': 'AWS', 'available': 72, 'avg_experience_years': 7},
+            {'technology': 'Kubernetes', 'available': 44, 'avg_experience_years': 6},
+            {'technology': 'DevOps', 'available': 53, 'avg_experience_years': 7},
+            {'technology': 'Data Engineering', 'available': 46, 'avg_experience_years': 6},
         ]
     }
 

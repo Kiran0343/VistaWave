@@ -14,14 +14,19 @@
       href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
       rel="stylesheet"
     />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
   <body>
     <header class="site-header" id="top">
       <div class="container nav-wrap">
         <a href="#top" class="brand" aria-label="vistawave home">
-          <span class="brand-mark">VW</span>
-          <span class="brand-text">vistawave Technology Staffing</span>
+          <img
+            class="brand-logo"
+            src="{{ url_for('static', filename='vistawave_logo.svg') }}"
+            alt="vistawave logo"
+            loading="eager"
+          />
         </a>
         <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
           Menu
@@ -114,19 +119,19 @@
 
       <section class="stats container reveal" id="results">
         <article>
-          <h3 data-counter="9">0</h3>
+          <h3 data-counter="4">0</h3>
           <p>Average days to first shortlist</p>
         </article>
         <article>
-          <h3 data-counter="95">0</h3>
+          <h3 data-counter="94">0</h3>
           <p>Candidate quality-match score (%)</p>
         </article>
         <article>
-          <h3 data-counter="91">0</h3>
+          <h3 data-counter="89">0</h3>
           <p>Offer acceptance rate (%)</p>
         </article>
         <article>
-          <h3 data-counter="1200">0</h3>
+          <h3 data-counter="412">0</h3>
           <p>Vetted technologists in active network</p>
         </article>
       </section>
@@ -381,12 +386,18 @@
               team will respond with a candidate shortlist and delivery plan.
             </p>
             <ul class="contact-list">
-              <li>Email: staffing@vistawave.com</li>
-              <li>Phone: +1 (555) 019-2200</li>
+              <li>Email: kiran@vistawave.com</li>
+              <li>Phone: 9409230343</li>
               <li>Coverage: US, Canada, and remote global talent hubs</li>
             </ul>
           </div>
-          <form class="contact-form reveal" id="contact-form" action="/api/v1/staffing-request" method="post">
+          <form
+            class="contact-form reveal"
+            id="contact-form"
+            action="{{ formspree_staffing_endpoint or '/api/v1/staffing-request' }}"
+            method="post"
+            data-formspree-endpoint="{{ formspree_staffing_endpoint }}"
+          >
             <label>
               Hiring Manager Name
               <input type="text" name="name" placeholder="Your name" required />
@@ -450,7 +461,13 @@
               <li>Support through offer stage</li>
             </ul>
           </div>
-          <form class="contact-form reveal" id="apply-form" action="/api/v1/apply" method="post">
+          <form
+            class="contact-form reveal"
+            id="apply-form"
+            action="{{ formspree_apply_endpoint or '/api/v1/apply' }}"
+            method="post"
+            data-formspree-endpoint="{{ formspree_apply_endpoint }}"
+          >
             <label>
               Full Name
               <input type="text" name="full_name" placeholder="Your full name" required />
