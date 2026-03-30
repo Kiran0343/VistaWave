@@ -7,6 +7,19 @@ if (navToggle && nav) {
     navToggle.setAttribute('aria-expanded', String(isOpen));
   });
 
+  document.addEventListener('click', (event) => {
+    if (!nav.classList.contains('is-open')) return;
+    if (nav.contains(event.target) || navToggle.contains(event.target)) return;
+    nav.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (event.key !== 'Escape') return;
+    nav.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+  });
+
   nav.querySelectorAll('a').forEach((link) => {
     link.addEventListener('click', () => {
       nav.classList.remove('is-open');
@@ -14,6 +27,28 @@ if (navToggle && nav) {
     });
   });
 }
+
+const scrollTopButton = document.createElement('button');
+scrollTopButton.className = 'scroll-top-btn';
+scrollTopButton.type = 'button';
+scrollTopButton.setAttribute('aria-label', 'Scroll to top');
+scrollTopButton.textContent = '↑';
+document.body.appendChild(scrollTopButton);
+
+const toggleScrollTopButton = () => {
+  if (window.scrollY > 240) {
+    scrollTopButton.classList.add('is-visible');
+    return;
+  }
+  scrollTopButton.classList.remove('is-visible');
+};
+
+window.addEventListener('scroll', toggleScrollTopButton, { passive: true });
+toggleScrollTopButton();
+
+scrollTopButton.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 
 const revealElements = document.querySelectorAll('.reveal');
 
