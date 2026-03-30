@@ -17,22 +17,29 @@ if (navToggle && nav) {
 
 const revealElements = document.querySelectorAll('.reveal');
 
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
-      }
-    });
-  },
-  { threshold: 0.18 }
-);
+if (!('IntersectionObserver' in window)) {
+  revealElements.forEach((element) => element.classList.add('visible'));
+} else {
+  const revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    },
+    {
+      threshold: 0.05,
+      rootMargin: '0px 0px -8% 0px',
+    }
+  );
 
-revealElements.forEach((element, index) => {
-  element.style.transitionDelay = `${Math.min(index * 40, 220)}ms`;
-  revealObserver.observe(element);
-});
+  revealElements.forEach((element, index) => {
+    element.style.transitionDelay = `${Math.min(index * 20, 120)}ms`;
+    revealObserver.observe(element);
+  });
+}
 
 const counters = document.querySelectorAll('[data-counter]');
 

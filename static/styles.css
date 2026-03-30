@@ -666,8 +666,9 @@ textarea {
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(8px);
+  transition: opacity 0.34s ease, transform 0.34s ease;
+  will-change: opacity, transform;
 }
 
 .reveal.visible {
