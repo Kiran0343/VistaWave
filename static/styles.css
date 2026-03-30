@@ -775,8 +775,11 @@ textarea {
 
 @media (max-width: 760px) {
   .brand-logo {
-    width: 180px;
+    width: 300px;
     height: auto;
+    display: block;
+    background: transparent;
+    margin: -50px -30px;
   }
 
   .nav-toggle {
