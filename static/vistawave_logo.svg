@@ -1,29 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 680 320" role="img" aria-label="vistawave Technology Staffing logo">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-label="Vista Wave Consulting logo">
   <defs>
-    <linearGradient id="waveGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#1D9E75"/>
-      <stop offset="50%" stop-color="#185FA5"/>
-      <stop offset="100%" stop-color="#534AB7"/>
+    <linearGradient id="waveGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1FB5A3;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0B5F7F;stop-opacity:1" />
     </linearGradient>
-    <linearGradient id="iconGrad" x1="0" y1="1" x2="0" y2="0">
-      <stop offset="0%" stop-color="#1D9E75"/>
-      <stop offset="100%" stop-color="#534AB7"/>
+    <linearGradient id="waveGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0D7FA1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#004E6E;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="waveGrad3" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#16ABC2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0A4A6C;stop-opacity:1" />
     </linearGradient>
   </defs>
 
-  <rect x="90" y="30" width="500" height="260" rx="20" fill="#0a0f1e" opacity="0.96"/>
-  <circle cx="214" cy="160" r="68" fill="none" stroke="url(#waveGrad)" stroke-width="2" opacity="0.45"/>
-  <circle cx="214" cy="160" r="54" fill="#111827"/>
+  <!-- Wave graphic: stylized "W" with flowing curves -->
+  <!-- Left wave -->
+  <path d="M 50 140 Q 80 80 120 140 Q 100 180 70 160" fill="url(#waveGrad1)" stroke="none"/>
+  <path d="M 70 140 Q 95 95 130 150 Q 110 190 85 170" fill="url(#waveGrad2)" stroke="none" opacity="0.85"/>
+  
+  <!-- Middle wave -->
+  <path d="M 120 140 Q 150 70 190 140 Q 170 190 140 160" fill="url(#waveGrad1)" stroke="none"/>
+  <path d="M 140 140 Q 165 85 210 150 Q 185 200 160 170" fill="url(#waveGrad2)" stroke="none" opacity="0.85"/>
+  
+  <!-- Right wave -->
+  <path d="M 190 140 Q 220 80 260 140 Q 240 180 210 160" fill="url(#waveGrad3)" stroke="none"/>
+  <path d="M 210 140 Q 235 95 270 150 Q 250 190 225 170" fill="url(#waveGrad2)" stroke="none" opacity="0.85"/>
 
-  <rect x="178" y="172" width="10" height="20" rx="5" fill="url(#iconGrad)" opacity="0.55"/>
-  <rect x="194" y="158" width="10" height="34" rx="5" fill="url(#iconGrad)" opacity="0.72"/>
-  <rect x="210" y="145" width="10" height="47" rx="5" fill="url(#iconGrad)" opacity="0.92"/>
-  <rect x="226" y="152" width="10" height="40" rx="5" fill="url(#iconGrad)" opacity="0.82"/>
-  <rect x="242" y="163" width="10" height="29" rx="5" fill="url(#iconGrad)" opacity="0.62"/>
+  <!-- Main text: VISTA WAVE -->
+  <text x="320" y="140" font-family="Arial, Helvetica, sans-serif" font-size="90" font-weight="800" fill="#00324D" letter-spacing="3">
+    VISTA WAVE
+  </text>
 
-  <text x="214" y="136" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="700" fill="url(#waveGrad)" letter-spacing="2">VW</text>
-  <text x="298" y="147" font-family="Georgia, serif" font-size="38" font-weight="700" fill="url(#waveGrad)">vistawave</text>
-  <text x="298" y="182" font-family="Arial, sans-serif" font-size="13" fill="#6b8cae" letter-spacing="4">TECHNOLOGY STAFFING</text>
-  <line x1="298" y1="198" x2="548" y2="198" stroke="url(#waveGrad)" stroke-width="1" opacity="0.5"/>
-  <text x="298" y="216" font-family="Arial, sans-serif" font-size="11" fill="#4a6080" letter-spacing="2">Connecting talent. Delivering results.</text>
+  <!-- Subtext: CONSULTING -->
+  <text x="320" y="210" font-family="Arial, Helvetica, sans-serif" font-size="48" font-weight="600" fill="#00324D" letter-spacing="2">
+    CONSULTING
+  </text>
 </svg>

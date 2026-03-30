@@ -110,6 +110,7 @@ Set these in your production environment:
 ```bash
 FLASK_ENV=production
 SECRET_KEY=your-production-secret-key
+CRISP_WEBSITE_ID=your_crisp_website_id
 ```
 
 ### Deployment Platforms

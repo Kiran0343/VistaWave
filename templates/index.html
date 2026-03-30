@@ -23,7 +23,7 @@
         <a href="#top" class="brand" aria-label="vistawave home">
           <img
             class="brand-logo"
-            src="{{ url_for('static', filename='vistawave_logo.svg') }}"
+            src="{{ url_for('static', filename='vistawave_logo.png') }}"
             alt="vistawave logo"
             loading="eager"
           />
@@ -547,5 +547,12 @@
     </footer>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% if crisp_website_id %}
+    <script
+      src="{{ url_for('static', filename='chat.js') }}"
+      data-crisp-website-id="{{ crisp_website_id }}"
+      defer
+    ></script>
+    {% endif %}
   </body>
 </html>

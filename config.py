@@ -25,6 +25,7 @@ class Config:
     RATELIMIT_HEADERS_ENABLED = True
     FORMSPREE_STAFFING_ENDPOINT = os.environ.get('FORMSPREE_STAFFING_ENDPOINT', '')
     FORMSPREE_APPLY_ENDPOINT = os.environ.get('FORMSPREE_APPLY_ENDPOINT', '')
+    CRISP_WEBSITE_ID = os.environ.get('CRISP_WEBSITE_ID', '')
 
 
 class DevelopmentConfig(Config):

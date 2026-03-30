@@ -81,13 +81,21 @@ def create_app(config_name=None):
         response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
         response.headers['Content-Security-Policy'] = (
             "default-src 'self'; "
-            "style-src 'self' https://fonts.googleapis.com; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com; "
-            "img-src 'self' data:; "
-            "script-src 'self'; "
-            "connect-src 'self';"
+            "img-src 'self' data: https://*.crisp.chat; "
+            "script-src 'self' https://client.crisp.chat; "
+            "connect-src 'self' https://*.crisp.chat wss://*.crisp.chat; "
+            "frame-src 'self' https://*.crisp.chat;"
         )
         return response
+
+    @app.context_processor
+    def inject_template_settings():
+        """Inject global template settings."""
+        return {
+            'crisp_website_id': app.config.get('CRISP_WEBSITE_ID', '').strip(),
+        }
     
     # Routes
     @app.route('/')
