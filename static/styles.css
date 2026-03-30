@@ -70,10 +70,10 @@ a {
 }
 
 .brand-logo {
-  width: 180px !important;
-  min-width: 180px;
-  height: 60px !important;
-  max-width: 180px !important;
+  width: 280px !important;
+  min-width: 280px;
+  height: 90px !important;
+  max-width: 280px !important;
   display: block;
 }
 
@@ -718,10 +718,10 @@ textarea {
 
 @media (max-width: 760px) {
   .brand-logo {
-    width: 130px !important;
-    min-width: 130px;
-    max-width: 130px !important;
-    height: 43px !important;
+    width: 180px !important;
+    min-width: 180px;
+    max-width: 180px !important;
+    height: 60px !important;
   }
 
   .nav-toggle {
