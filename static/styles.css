@@ -5,9 +5,10 @@
   --muted: #5e6470;
   --accent: #dc5c45;
   --accent-2: #0e7f80;
-  --line: rgba(24, 32, 43, 0.14);
+  --line: rgba(24, 32, 43, 0.1);
   --radius: 18px;
-  --shadow: 0 20px 40px rgba(24, 32, 43, 0.08);
+  --shadow: 0 12px 32px rgba(24, 32, 43, 0.06), 0 2px 6px rgba(24, 32, 43, 0.04);
+  --shadow-hover: 0 20px 44px rgba(24, 32, 43, 0.12), 0 4px 12px rgba(24, 32, 43, 0.06);
 }
 
 * {
@@ -88,30 +89,34 @@ a {
 .primary-nav a {
   font-weight: 500;
   color: var(--muted);
-  padding: 0.58rem 0.66rem;
+  padding: 0.5rem 0.72rem;
   border-radius: 10px;
   font-size: 0.96rem;
-  transition: color 180ms ease;
+  transition: color 180ms ease, background-color 180ms ease;
 }
 
 .primary-nav a:hover {
   color: var(--ink);
+  background: rgba(24, 32, 43, 0.05);
 }
 
 .nav-cta {
   color: #fff !important;
-  background: var(--ink);
+  background: linear-gradient(135deg, var(--ink), #2d3746) !important;
   margin-left: 0;
-  padding: 0.33rem 0.62rem !important;
+  padding: 0.38rem 0.72rem !important;
   border-radius: 999px !important;
   font-weight: 600 !important;
   font-size: 0.86rem !important;
   text-align: center;
+  transition: transform 180ms ease, box-shadow 180ms ease !important;
 }
 
 .nav-cta:hover {
-  background: #2d3746 !important;
+  background: linear-gradient(135deg, #2d3746, var(--ink)) !important;
   color: #fff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 32, 43, 0.25);
 }
 
 .nav-toggle {
@@ -152,22 +157,27 @@ a {
   justify-content: center;
   border: 1px solid transparent;
   border-radius: 999px;
-  padding: 0.72rem 1.15rem;
+  padding: 0.72rem 1.25rem;
   font-weight: 700;
-  background: var(--ink);
+  background: linear-gradient(135deg, var(--ink), #2d3746);
   color: #fff;
-  transition: transform 240ms ease, box-shadow 240ms ease, background-color 240ms ease;
+  transition: transform 240ms ease, box-shadow 240ms ease, background 240ms ease;
 }
 
 .btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 24px rgba(24, 32, 43, 0.22);
+  box-shadow: 0 14px 28px rgba(24, 32, 43, 0.2);
 }
 
 .btn-secondary {
   background: transparent;
   color: var(--ink);
   border-color: var(--line);
+}
+
+.btn-secondary:hover {
+  background: rgba(24, 32, 43, 0.04);
+  border-color: rgba(24, 32, 43, 0.25);
 }
 
 .btn-small {
@@ -215,11 +225,12 @@ a {
 }
 
 .hero-panel {
-  background: linear-gradient(160deg, rgba(255, 253, 250, 0.95), rgba(255, 246, 233, 0.85));
+  background: linear-gradient(160deg, rgba(255, 253, 250, 0.96), rgba(255, 246, 233, 0.88));
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1.5rem;
+  padding: 1.5rem 1.75rem;
+  backdrop-filter: blur(6px);
 }
 
 .hero-panel h2 {
@@ -278,6 +289,9 @@ a {
   text-transform: uppercase;
   color: var(--accent-2);
   font-size: 0.76rem;
+  background: rgba(14, 127, 128, 0.08);
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
 }
 
 .section {
@@ -299,9 +313,16 @@ a {
 .stats article {
   background: var(--paper);
   border: 1px solid var(--line);
+  border-top: 3px solid var(--accent-2);
   border-radius: 14px;
   text-align: center;
-  padding: 1.1rem 0.9rem;
+  padding: 1.2rem 0.9rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.stats article:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .stats h3 {
@@ -333,6 +354,12 @@ a {
   border-radius: var(--radius);
   padding: 1.3rem;
   box-shadow: var(--shadow);
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.command-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .command-card h3 {
@@ -386,6 +413,12 @@ a {
   border: 1px solid var(--line);
   border-radius: 14px;
   padding: 1rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.talent-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 .talent-card h3 {
@@ -409,10 +442,17 @@ a {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.35rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.about-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .about-card h3 {
   margin-top: 0;
+  color: var(--accent-2);
 }
 
 .jobs-grid {
@@ -429,6 +469,12 @@ a {
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.job-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .job-header {
@@ -493,12 +539,17 @@ a {
 
 .skill-tag {
   display: inline-block;
-  background: rgba(220, 92, 69, 0.1);
+  background: rgba(220, 92, 69, 0.08);
   color: var(--accent);
   padding: 0.3rem 0.6rem;
   border-radius: 999px;
   font-size: 0.8rem;
   font-weight: 600;
+  transition: background 180ms ease;
+}
+
+.skill-tag:hover {
+  background: rgba(220, 92, 69, 0.16);
 }
 
 .benefits-grid {
@@ -512,10 +563,17 @@ a {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.35rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.benefit-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .benefit-card h3 {
   margin-top: 0;
+  color: var(--accent-2);
 }
 
 .card-grid {
@@ -530,6 +588,21 @@ blockquote,
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1.35rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.service-card:hover,
+.insight-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
+}
+
+.service-card {
+  border-left: 3px solid var(--accent);
+}
+
+.insight-card {
+  border-left: 3px solid var(--accent-2);
 }
 
 .service-card h3,
@@ -616,6 +689,19 @@ blockquote {
   margin: 0;
   font-size: 1.02rem;
   line-height: 1.7;
+  position: relative;
+  border-left: 3px solid var(--accent);
+}
+
+blockquote::before {
+  content: "\201C";
+  position: absolute;
+  top: -0.2rem;
+  left: 0.5rem;
+  font-size: 3rem;
+  font-family: "Fraunces", serif;
+  color: rgba(220, 92, 69, 0.18);
+  line-height: 1;
 }
 
 blockquote cite {
@@ -672,12 +758,21 @@ textarea {
   padding: 0.7rem 0.72rem;
   font: inherit;
   background: #fff;
+  transition: border-color 180ms ease, box-shadow 180ms ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--accent-2);
+  box-shadow: 0 0 0 3px rgba(14, 127, 128, 0.12);
 }
 
 .site-footer {
-  padding: 1.5rem 0;
+  padding: 1.8rem 0;
   border-top: 1px solid var(--line);
-  background: rgba(255, 253, 250, 0.65);
+  background: linear-gradient(180deg, rgba(248, 243, 234, 0.4), rgba(255, 253, 250, 0.8));
 }
 
 .footer-wrap {
@@ -881,6 +976,12 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: transform 250ms ease, box-shadow 250ms ease;
+}
+
+.post-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-hover);
 }
 
 .post-card-meta {
