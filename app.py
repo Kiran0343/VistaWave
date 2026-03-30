@@ -14,6 +14,7 @@ from flask_limiter.util import get_remote_address
 from pydantic import BaseModel, EmailStr, Field, ValidationError
 from werkzeug.exceptions import HTTPException
 from config import config
+from blog_posts import BLOG_POSTS
 
 
 limiter = Limiter(key_func=get_remote_address, storage_uri='memory://')
@@ -95,8 +96,24 @@ def create_app(config_name=None):
         return render_template(
             'index.html',
             formspree_staffing_endpoint=app.config.get('FORMSPREE_STAFFING_ENDPOINT', ''),
-            formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', '')
+            formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', ''),
+            blog_posts=BLOG_POSTS
         )
+
+    @app.route('/blog')
+    @limiter.limit('120 per minute')
+    def blog():
+        """Blog listing page"""
+        return render_template('blog.html', posts=BLOG_POSTS)
+
+    @app.route('/blog/<slug>')
+    @limiter.limit('120 per minute')
+    def blog_post(slug):
+        """Individual blog post page"""
+        post = next((p for p in BLOG_POSTS if p['slug'] == slug), None)
+        if post is None:
+            return render_template('404.html'), 404
+        return render_template('blog_post.html', post=post)
     
     @app.route('/health')
     @limiter.limit('120 per minute')

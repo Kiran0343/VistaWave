@@ -35,6 +35,7 @@
           <a href="#about">About</a>
           <a href="#services">Services</a>
           <a href="#jobs">Jobs</a>
+          <a href="/blog">Blog</a>
           <a href="#contact">Contact</a>
           <a href="#contact" class="nav-cta">Hire</a>
         </nav>
@@ -373,6 +374,35 @@
               <cite>Director of Technology, Enterprise Healthcare</cite>
             </blockquote>
           </div>
+        </div>
+      </section>
+
+      <section class="section container" id="blog-preview">
+        <div class="section-head reveal">
+          <p class="eyebrow">vistawave Insights</p>
+          <h2>From Our Blog</h2>
+          <p>
+            Practical hiring strategies and staffing model guidance for technology leaders.
+          </p>
+        </div>
+        <div class="blog-preview-grid">
+          {% for post in blog_posts %}
+          <article class="post-card reveal">
+            <div class="post-card-meta">
+              <span class="post-category">{{ post.category }}</span>
+              <span class="post-date">{{ post.published_display }}</span>
+              <span class="post-read-time">{{ post.reading_time }}</span>
+            </div>
+            <h3 class="post-title">
+              <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+            </h3>
+            <p class="post-excerpt">{{ post.excerpt }}</p>
+            <a href="/blog/{{ post.slug }}" class="btn btn-secondary btn-small">Read Article →</a>
+          </article>
+          {% endfor %}
+        </div>
+        <div class="blog-preview-cta">
+          <a href="/blog" class="btn btn-secondary">View All Articles</a>
         </div>
       </section>
 

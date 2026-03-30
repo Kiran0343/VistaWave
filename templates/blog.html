@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Technology Staffing Blog | vistawave</title>
+    <meta
+      name="description"
+      content="Expert insights on technology staffing, hiring strategies, and talent acquisition for engineering leaders. From vistawave Technology Staffing."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="{{ request.url }}" />
+    <meta property="og:title" content="Technology Staffing Blog | vistawave" />
+    <meta
+      property="og:description"
+      content="Expert insights on technology staffing, hiring strategies, and talent acquisition for engineering leaders."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Blog",
+      "name": "vistawave Technology Staffing Blog",
+      "description": "Expert insights on technology staffing, hiring strategies, and talent acquisition for engineering leaders.",
+      "publisher": {
+        "@type": "Organization",
+        "name": "vistawave Technology Staffing"
+      }
+    }
+    </script>
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a href="/" class="brand" aria-label="vistawave home">
+          <img
+            class="brand-logo"
+            src="{{ url_for('static', filename='vistawave_logo.svg') }}"
+            alt="vistawave logo"
+            loading="eager"
+          />
+        </a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav">
+          Menu
+        </button>
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+          <a href="/#about">About</a>
+          <a href="/#services">Services</a>
+          <a href="/#jobs">Jobs</a>
+          <a href="/blog" aria-current="page">Blog</a>
+          <a href="/#contact">Contact</a>
+          <a href="/#contact" class="nav-cta">Hire</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="blog-hero">
+        <div class="container">
+          <p class="eyebrow">vistawave Insights</p>
+          <h1>Technology Staffing Blog</h1>
+          <p class="lead">
+            Practical hiring strategies, staffing model analysis, and talent market
+            insights for engineering leaders.
+          </p>
+        </div>
+      </section>
+
+      <section class="section container">
+        <div class="blog-post-list">
+          {% for post in posts %}
+          <article class="post-card reveal">
+            <div class="post-card-meta">
+              <span class="post-category">{{ post.category }}</span>
+              <span class="post-date">{{ post.published_display }}</span>
+              <span class="post-read-time">{{ post.reading_time }}</span>
+            </div>
+            <h2 class="post-title">
+              <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
+            </h2>
+            <p class="post-excerpt">{{ post.excerpt }}</p>
+            <a href="/blog/{{ post.slug }}" class="btn btn-secondary btn-small">
+              Read Article →
+            </a>
+          </article>
+          {% endfor %}
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>© 2026 vistawave Technology Staffing. All rights reserved.</p>
+        <a href="/">Back to Home</a>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>
