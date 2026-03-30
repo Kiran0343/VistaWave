@@ -1,6 +1,6 @@
-# VistWave Consulting LLC - Website
+# vistawave Technology Staffing - Dual-Sided Platform
 
-Modern, production-ready Flask application for the VistWave consulting website.
+Modern, production-ready Flask application for a technology staffing firm with dual platforms for hiring companies and job seekers.
 
 ## Features
 
@@ -12,6 +12,13 @@ Modern, production-ready Flask application for the VistWave consulting website.
 - 📋 Health check endpoint for monitoring
 - 🛡️ Security middleware with CSRF protection
 - 📝 Comprehensive error pages
+- ⚡ Realtime metrics streaming with Server-Sent Events (SSE)
+- 🚦 API rate limiting and response caching for resilience
+- ✅ Pydantic request validation for data quality
+- 🗜️ Automatic HTTP compression for faster responses
+- 👔 **Dual-sided platform**: Clients hire talent + Job seekers find opportunities
+- 💼 Job board with filtering and smart matching
+- 📝 Resume submission and candidate tracking
 
 ## Project Structure
 
@@ -204,6 +211,58 @@ The application exposes a `/health` endpoint for monitoring:
 curl http://localhost:5000/health
 # Response: {"status":"healthy"}
 ```
+
+## Advanced API Endpoints
+
+The app now includes a comprehensive API layer for both companies and job seekers:
+
+### For Hiring Companies
+
+- `GET /api/v1/status` - service and stack status metadata
+- `GET /api/v1/metrics` - cached staffing metrics payload (fill rate, time-to-fill, etc.)
+- `GET /api/v1/talent-pool` - live technology talent availability snapshot
+- `GET /api/v1/events` - realtime SSE stream for dashboard updates
+- `POST /api/v1/staffing-request` - validated staffing request intake endpoint
+
+Example staffing request:
+
+```bash
+curl -X POST http://localhost:5000/api/v1/staffing-request \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name":"Alex Rivera",
+    "email":"alex@example.com",
+    "company":"Northstar Labs",
+    "role_title":"Senior Data Engineer",
+    "technologies":["Python","AWS","Snowflake"],
+    "hiring_model":"Contract-to-Hire",
+    "positions":3,
+    "start_timeline":"2-4 weeks",
+    "goals":"Build a modern data platform and improve analytics reliability."
+  }'
+```
+
+### For Job Seekers
+
+- `GET /api/v1/jobs` - browse all open job postings
+- `GET /api/v1/jobs/<job_id>` - get specific job details
+- `POST /api/v1/apply` - submit job application with resume and skills
+
+Example job application:
+
+```bash
+curl -X POST http://localhost:5000/api/v1/apply \
+  -H "Content-Type: application/json" \
+  -d '{
+    "full_name":"Jamie Chen",
+    "email":"jamie@example.com",
+    "phone":"+1 (555) 123-4567",
+    "current_title":"Senior Engineer",
+    "years_experience":6,
+    "skills":["Python","AWS","PostgreSQL"],
+    "linkedin_url":"https://linkedin.com/in/jamiechen",
+    "resume_summary":"Experienced backend engineer with 6 years building scalable systems.",
+    "job_id":"job_001"
 
 ## Security
 

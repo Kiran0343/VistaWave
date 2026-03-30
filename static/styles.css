@@ -87,16 +87,36 @@ a {
 .primary-nav {
   display: flex;
   align-items: center;
-  gap: 1.1rem;
+  gap: 0.35rem;
+  justify-content: flex-end;
 }
 
 .primary-nav a {
-  font-weight: 600;
+  font-weight: 500;
   color: var(--muted);
+  padding: 0.25rem 0.4rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: color 180ms ease;
 }
 
 .primary-nav a:hover {
   color: var(--ink);
+}
+
+.nav-cta {
+  color: #fff !important;
+  background: var(--ink);
+  margin-left: 0.2rem;
+  padding: 0.33rem 0.62rem !important;
+  border-radius: 999px !important;
+  font-weight: 600 !important;
+  font-size: 0.86rem !important;
+}
+
+.nav-cta:hover {
+  background: #2d3746 !important;
+  color: #fff !important;
 }
 
 .nav-toggle {
@@ -278,6 +298,203 @@ a {
   gap: 1rem;
 }
 
+.command-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.command-card {
+  background: linear-gradient(170deg, rgba(255, 253, 250, 0.98), rgba(255, 247, 235, 0.9));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.3rem;
+  box-shadow: var(--shadow);
+}
+
+.command-card h3 {
+  margin-top: 0;
+  margin-bottom: 0.6rem;
+}
+
+.metric-value {
+  margin: 0;
+  font-family: "Fraunces", serif;
+  font-size: clamp(1.7rem, 2.8vw, 2.3rem);
+  line-height: 1.1;
+}
+
+.metric-sub {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+}
+
+.command-footer {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.api-status {
+  margin: 0;
+}
+
+.recommendation-list {
+  margin: 0;
+  padding: 1rem 1rem 1rem 2rem;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.recommendation-list li {
+  color: var(--muted);
+  margin-bottom: 0.45rem;
+}
+
+.talent-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.talent-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1rem;
+}
+
+.talent-card h3 {
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+}
+
+.talent-card p {
+  margin: 0.2rem 0;
+  color: var(--muted);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.about-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+}
+
+.about-card h3 {
+  margin-top: 0;
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+
+.job-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.job-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  gap: 1rem;
+}
+
+.job-header h3 {
+  margin: 0;
+  flex: 1;
+}
+
+.job-type {
+  display: inline-block;
+  background: var(--accent-2);
+  color: white;
+  padding: 0.35rem 0.65rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.job-company {
+  margin: 0;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.job-location {
+  margin: 0;
+  color: var(--muted);
+}
+
+.job-description {
+  margin: 0.5rem 0 0;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.job-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.job-meta span {
+  display: flex;
+  align-items: center;
+}
+
+.job-skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.skill-tag {
+  display: inline-block;
+  background: rgba(220, 92, 69, 0.1);
+  color: var(--accent);
+  padding: 0.3rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.benefit-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1.35rem;
+}
+
+.benefit-card h3 {
+  margin-top: 0;
+}
+
 .card-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -403,6 +620,20 @@ blockquote cite {
   gap: 0.85rem;
 }
 
+.contact-status {
+  min-height: 1.4rem;
+  margin: 0;
+  font-weight: 700;
+}
+
+.contact-status.is-success {
+  color: var(--accent-2);
+}
+
+.contact-status.is-error {
+  color: #b92828;
+}
+
 label {
   display: grid;
   gap: 0.32rem;
@@ -410,6 +641,7 @@ label {
 }
 
 input,
+select,
 textarea {
   width: 100%;
   border: 1px solid var(--line);
@@ -464,8 +696,25 @@ textarea {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .command-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .insight-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .talent-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .about-grid,
+  .benefits-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .jobs-grid {
+    grid-template-columns: 1fr;
   }
 
   .stats {
@@ -499,11 +748,22 @@ textarea {
     box-shadow: var(--shadow);
     padding: 0.8rem;
     display: grid;
-    gap: 0.65rem;
+    gap: 0.45rem;
     opacity: 0;
     transform: scale(0.98) translateY(-4px);
     pointer-events: none;
     transition: opacity 200ms ease, transform 200ms ease;
+  }
+
+  .primary-nav a {
+    padding: 0.58rem 0.66rem;
+    border-radius: 10px;
+    font-size: 0.96rem;
+  }
+
+  .nav-cta {
+    margin-left: 0;
+    text-align: center;
   }
 
   .primary-nav.is-open {
@@ -518,7 +778,12 @@ textarea {
   }
 
   .card-grid,
+  .command-grid,
+  .about-grid,
+  .benefits-grid,
+  .jobs-grid,
   .insight-grid,
+  .talent-grid,
   .quote-grid,
   .stats {
     grid-template-columns: 1fr;
