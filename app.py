@@ -281,46 +281,45 @@ def generate_sample_jobs():
 
 
 def build_live_metrics(app):
-    """Generate staffing metrics for API and SSE consumers."""
+    """Generate consulting metrics for API and SSE consumers."""
     started_at = app.config['STARTED_AT_UTC']
     uptime_minutes = max(
         1,
         int((datetime.now(timezone.utc) - started_at).total_seconds() // 60)
     )
 
-    active_requisitions = len(app.extensions['job_postings'])
-    qualified_candidates = 412
+    active_projects = len(app.extensions['job_postings'])
     data = {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'uptime_minutes': uptime_minutes,
-        'fill_rate': 94,
-        'submission_to_interview_days': 3.8,
-        'active_client_requisitions': active_requisitions,
-        'qualified_candidates': qualified_candidates,
-        'offer_acceptance_rate': 89,
-        'time_to_fill_days': 16,
+        'fill_rate': 97,
+        'submission_to_interview_days': 2.5,
+        'active_client_requisitions': active_projects,
+        'qualified_candidates': 85,
+        'offer_acceptance_rate': 96,
+        'time_to_fill_days': 14,
         'recommendations': [
-            'Prioritize roles with immediate delivery dependencies first.',
-            'Use blended contract-to-hire strategy for hard-to-fill niches.',
-            'Standardize interview scorecards to improve match quality.'
+            'Prioritize cloud migration projects with immediate business impact.',
+            'Leverage data modernization to unlock analytics-driven decision making.',
+            'Adopt a phased transformation approach for enterprise-scale changes.'
         ]
     }
     return data
 
 
 def build_talent_pool_snapshot():
-    """Create talent pool summary."""
+    """Create consulting capabilities summary."""
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'categories': [
-            {'technology': 'Python', 'available': 84, 'avg_experience_years': 6},
-            {'technology': 'Java', 'available': 63, 'avg_experience_years': 7},
-            {'technology': 'React', 'available': 58, 'avg_experience_years': 5},
-            {'technology': 'Node.js', 'available': 49, 'avg_experience_years': 5},
-            {'technology': 'AWS', 'available': 72, 'avg_experience_years': 7},
-            {'technology': 'Kubernetes', 'available': 44, 'avg_experience_years': 6},
-            {'technology': 'DevOps', 'available': 53, 'avg_experience_years': 7},
-            {'technology': 'Data Engineering', 'available': 46, 'avg_experience_years': 6},
+            {'technology': 'Cloud (AWS)', 'available': 24, 'avg_experience_years': 8},
+            {'technology': 'Cloud (Azure)', 'available': 18, 'avg_experience_years': 7},
+            {'technology': 'Data Engineering', 'available': 20, 'avg_experience_years': 7},
+            {'technology': 'AI / Machine Learning', 'available': 14, 'avg_experience_years': 6},
+            {'technology': 'Cybersecurity', 'available': 16, 'avg_experience_years': 9},
+            {'technology': 'DevOps & SRE', 'available': 18, 'avg_experience_years': 7},
+            {'technology': 'Digital Strategy', 'available': 12, 'avg_experience_years': 10},
+            {'technology': 'Enterprise Architecture', 'available': 10, 'avg_experience_years': 12},
         ]
     }
 
@@ -343,7 +342,7 @@ def register_api_routes(app):
                 'Response Caching',
                 'HTTP Compression'
             ],
-            'business_focus': 'Technology Staffing - Dual Platform (Clients & Job Seekers)'
+            'business_focus': 'IT Consulting - Cloud, Data, Strategy & Digital Transformation'
         })
 
     @app.get('/api/v1/metrics')

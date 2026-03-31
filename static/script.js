@@ -186,7 +186,7 @@ const renderTalentPool = (payload) => {
       (item) => `
       <article class="talent-card reveal visible">
         <h3>${item.technology}</h3>
-        <p><strong>${item.available}</strong> available candidates</p>
+        <p><strong>${item.available}</strong> consultants</p>
         <p>${item.avg_experience_years}+ yrs avg experience</p>
       </article>`
     )
