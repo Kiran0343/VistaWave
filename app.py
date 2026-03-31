@@ -114,6 +114,15 @@ def create_app(config_name=None):
         """Blog listing page"""
         return render_template('blog.html', posts=BLOG_POSTS)
 
+    @app.route('/jobs')
+    @limiter.limit('120 per minute')
+    def jobs():
+        """Jobs board page"""
+        return render_template(
+            'jobs.html',
+            formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', ''),
+        )
+
     @app.route('/blog/<slug>')
     @limiter.limit('120 per minute')
     def blog_post(slug):

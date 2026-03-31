@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Open Technology Positions | vistawave</title>
+    <meta
+      name="description"
+      content="Explore contract, contract-to-hire, and direct placement technology positions at vistawave. Apply in minutes and hear back quickly."
+    />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="{{ request.url }}" />
+    <meta property="og:title" content="Open Technology Positions | vistawave" />
+    <meta
+      property="og:description"
+      content="Explore contract, contract-to-hire, and direct placement technology positions. Apply in minutes."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a href="/" class="brand" aria-label="vistawave home">
+          <img
+            class="brand-logo"
+            src="{{ url_for('static', filename='vistawave_logo.png') }}"
+            alt="vistawave logo"
+            loading="eager"
+          />
+        </a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Toggle navigation menu">
+          <span aria-hidden="true">☰</span>
+        </button>
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+          <a href="/#about">About</a>
+          <a href="/#services">Services</a>
+          <a href="/jobs" aria-current="page">Jobs</a>
+          <a href="/blog">Blog</a>
+          <a href="/#contact">Contact</a>
+          <a href="/#contact" class="nav-cta">Hire</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <section class="blog-hero">
+        <div class="container">
+          <p class="eyebrow">Join Our Network</p>
+          <h1>Open Technology Positions</h1>
+          <p class="lead">
+            Explore contract, contract-to-hire, and direct placement opportunities
+            across leading companies. Apply in minutes and hear back quickly.
+          </p>
+        </div>
+      </section>
+
+      <section class="section container">
+        <div id="jobs-grid" class="jobs-grid"></div>
+      </section>
+
+      <section class="section container" id="apply">
+        <div class="contact-grid">
+          <div class="reveal">
+            <p class="eyebrow">Ready to Apply?</p>
+            <h2>Tell us about yourself</h2>
+            <p>
+              Complete your profile and we'll match you with roles that fit your skills
+              and career stage. Our recruiters will review and reach out with opportunities.
+            </p>
+            <ul class="contact-list">
+              <li>Application review: 24-48 hours</li>
+              <li>Interview facilitation: Quick turnaround</li>
+              <li>Support through offer stage</li>
+            </ul>
+          </div>
+          <form
+            class="contact-form reveal"
+            id="apply-form"
+            action="{{ formspree_apply_endpoint or '/api/v1/apply' }}"
+            method="post"
+            data-formspree-endpoint="{{ formspree_apply_endpoint }}"
+          >
+            <label>
+              Full Name
+              <input type="text" name="full_name" placeholder="Your full name" required />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" placeholder="you@example.com" required />
+            </label>
+            <label>
+              Phone Number
+              <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required />
+            </label>
+            <label>
+              Current Title
+              <input type="text" name="current_title" placeholder="e.g. Senior Engineer" required />
+            </label>
+            <label>
+              Years of Experience
+              <input type="number" min="0" max="60" name="years_experience" placeholder="5" required />
+            </label>
+            <label>
+              Key Skills
+              <input type="text" name="skills" placeholder="Python, AWS, React (comma-separated)" required />
+            </label>
+            <label>
+              LinkedIn Profile URL
+              <input type="url" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" required />
+            </label>
+            <label>
+              Professional Summary
+              <textarea name="resume_summary" rows="4" placeholder="Tell us about your background and what you're looking for" required></textarea>
+            </label>
+            <input type="hidden" name="job_id" id="apply-job-id" value="" />
+            <button class="btn" type="submit">Submit Application</button>
+            <p id="apply-status" class="contact-status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-wrap">
+        <p>© 2026 vistawave Technology Staffing. All rights reserved.</p>
+        <a href="/">Back to Home</a>
+      </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% if crisp_website_id %}
+    <script
+      src="{{ url_for('static', filename='chat.js') }}"
+      data-crisp-website-id="{{ crisp_website_id }}"
+      defer
+    ></script>
+    {% endif %}
+  </body>
+</html>

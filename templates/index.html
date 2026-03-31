@@ -34,7 +34,7 @@
         <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
           <a href="#about">About</a>
           <a href="#services">Services</a>
-          <a href="#jobs">Jobs</a>
+          <a href="/jobs">Jobs</a>
           <a href="/blog">Blog</a>
           <a href="#contact">Contact</a>
           <a href="#contact" class="nav-cta">Hire</a>
@@ -191,13 +191,15 @@
       <section class="section container" id="jobs">
         <div class="section-head reveal">
           <p class="eyebrow">Join Our Network</p>
-          <h2>Jobs Board: Open Technology Positions</h2>
+          <h2>Open Technology Positions</h2>
           <p>
             Explore contract, contract-to-hire, and direct placement opportunities
             across leading companies. Apply in minutes and hear back quickly.
           </p>
         </div>
-        <div id="jobs-grid" class="jobs-grid"></div>
+        <div class="hero-actions" style="justify-content: center; margin-top: 1.5rem;">
+          <a href="/jobs" class="btn">View All Open Positions →</a>
+        </div>
       </section>
 
       <section class="section container" id="services">
@@ -472,67 +474,6 @@
             </label>
             <button class="btn" type="submit">Submit Staffing Request</button>
             <p id="contact-status" class="contact-status" aria-live="polite"></p>
-          </form>
-        </div>
-      </section>
-
-      <section class="section container" id="apply">
-        <div class="contact-grid">
-          <div class="reveal">
-            <p class="eyebrow">Ready to Apply?</p>
-            <h2>Tell us about yourself</h2>
-            <p>
-              Complete your profile and we'll match you with roles that fit your skills
-              and career stage. Our recruiters will review and reach out with opportunities.
-            </p>
-            <ul class="contact-list">
-              <li>Application review: 24-48 hours</li>
-              <li>Interview facilitation: Quick turnaround</li>
-              <li>Support through offer stage</li>
-            </ul>
-          </div>
-          <form
-            class="contact-form reveal"
-            id="apply-form"
-            action="{{ formspree_apply_endpoint or '/api/v1/apply' }}"
-            method="post"
-            data-formspree-endpoint="{{ formspree_apply_endpoint }}"
-          >
-            <label>
-              Full Name
-              <input type="text" name="full_name" placeholder="Your full name" required />
-            </label>
-            <label>
-              Email
-              <input type="email" name="email" placeholder="you@example.com" required />
-            </label>
-            <label>
-              Phone Number
-              <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required />
-            </label>
-            <label>
-              Current Title
-              <input type="text" name="current_title" placeholder="e.g. Senior Engineer" required />
-            </label>
-            <label>
-              Years of Experience
-              <input type="number" min="0" max="60" name="years_experience" placeholder="5" required />
-            </label>
-            <label>
-              Key Skills
-              <input type="text" name="skills" placeholder="Python, AWS, React (comma-separated)" required />
-            </label>
-            <label>
-              LinkedIn Profile URL
-              <input type="url" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" required />
-            </label>
-            <label>
-              Professional Summary
-              <textarea name="resume_summary" rows="4" placeholder="Tell us about your background and what you're looking for" required></textarea>
-            </label>
-            <input type="hidden" name="job_id" id="apply-job-id" value="" />
-            <button class="btn" type="submit">Submit Application</button>
-            <p id="apply-status" class="contact-status" aria-live="polite"></p>
           </form>
         </div>
       </section>
