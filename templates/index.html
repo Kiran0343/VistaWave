@@ -3,11 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>vistawave IT Consulting</title>
+    <title>IT Consulting for Cloud, Data & AI Transformation | vistawave</title>
     <meta
       name="description"
-      content="vistawave delivers IT consulting services across cloud, data, strategy, and digital transformation for enterprises."
+      content="vistawave helps CIOs, CTOs, and operations leaders modernize cloud, data, and AI systems with senior consultants who deliver strategy, execution, and measurable business outcomes."
     />
+    <link rel="canonical" href="{{ request.url }}" />
+    <meta property="og:title" content="IT Consulting for Cloud, Data & AI Transformation | vistawave" />
+    <meta
+      property="og:description"
+      content="Senior IT consultants for cloud modernization, data platforms, AI initiatives, and transformation programs that need clear execution and measurable ROI."
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="{{ request.url }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -17,7 +25,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
-  <body>
+  <body data-api-base-url="{{ api_base_url }}">
     <header class="site-header" id="top">
       <div class="container nav-wrap">
         <a href="#top" class="brand" aria-label="vistawave home">
@@ -48,204 +56,144 @@
         <div class="hero-bg-shape hero-bg-shape-2" aria-hidden="true"></div>
         <div class="container hero-grid">
           <div class="hero-content reveal">
-            <p class="eyebrow">IT Consulting Partner</p>
-            <h1>Modernize your IT. Grow your business.</h1>
+            <p class="eyebrow">IT Consulting for High-Stakes Technology Programs</p>
+            <h1>Cloud, data, and AI initiatives move faster when the people advising you can also build them.</h1>
             <p class="lead">
-              vistawave helps enterprises accelerate digital transformation with
-              expert consulting across cloud, data, cybersecurity, AI, and
-              IT strategy.
+              vistawave helps CIOs, CTOs, and operations leaders modernize platforms,
+              reduce delivery risk, and turn complex technology programs into measurable business outcomes.
             </p>
             <div class="hero-actions">
               <a href="#contact" class="btn">Book a Free IT Assessment</a>
-              <a href="#services" class="btn btn-secondary">Explore Our Services</a>
+              <a href="#services" class="btn btn-secondary">Explore Services</a>
             </div>
           </div>
           <aside class="hero-panel reveal" aria-label="Consulting highlights">
-            <h2>How we help you grow</h2>
+            <h2>What you get in the free assessment</h2>
             <ul>
               <li>
-                <span>Cloud & Infrastructure</span>
-                <p>Migrate, optimize, and manage cloud environments at scale.</p>
+                <span>Current-State Review</span>
+                <p>A sharp look at blockers, risks, technical debt, and missed opportunities.</p>
               </li>
               <li>
-                <span>Data & Analytics</span>
-                <p>Unlock insights with modern data platforms and AI-driven intelligence.</p>
+                <span>Prioritized Roadmap</span>
+                <p>Clear next steps with quick wins, longer-term bets, and likely tradeoffs.</p>
               </li>
               <li>
-                <span>Strategy & Transformation</span>
-                <p>Align technology with business goals for measurable outcomes.</p>
+                <span>Delivery Recommendation</span>
+                <p>Advisory, project-based delivery, or embedded support based on your constraints.</p>
+              </li>
+              <li>
+                <span>Execution Clarity</span>
+                <p>Practical guidance on timeline, team shape, and where the real delivery risk sits.</p>
               </li>
             </ul>
           </aside>
         </div>
       </section>
 
-      <section class="section container" id="about">
-        <div class="section-head reveal">
-          <p class="eyebrow">About vistawave</p>
-          <h2>IT consulting, reimagined</h2>
-          <p>
-            vistawave partners with enterprises to modernize technology, streamline
-            operations, and drive growth. We combine deep technical expertise with
-            strategic advisory to deliver real business outcomes.
-          </p>
-        </div>
-        <div class="about-grid">
-          <article class="about-card reveal">
-            <h3>For Enterprises</h3>
-            <p>
-              Access expert IT consulting across cloud, data, security, and digital
-              transformation. From quick assessments to full-scale implementations,
-              we deliver results faster than traditional firms.
-            </p>
-          </article>
-          <article class="about-card reveal">
-            <h3>For Growing Businesses</h3>
-            <p>
-              Get enterprise-grade IT strategy without enterprise-level overhead.
-              We help mid-market companies build the right technology foundation
-              to scale confidently.
-            </p>
-          </article>
-          <article class="about-card reveal">
-            <h3>Our Difference</h3>
-            <p>
-              Built by practitioners, not just advisors. Real hands-on expertise
-              in cloud, data engineering, and AI — combined with a commitment to
-              measurable business impact.
-            </p>
-          </article>
+      <section class="trust-bar" aria-label="Industry focus">
+        <div class="container">
+          <div class="trust-bar-inner reveal">
+            <span class="trust-badge">Healthcare</span>
+            <span class="trust-badge">Financial Services</span>
+            <span class="trust-badge">SaaS Platforms</span>
+            <span class="trust-badge">Manufacturing</span>
+            <span class="trust-badge">Data-Heavy Teams</span>
+          </div>
         </div>
       </section>
 
       <section class="stats container reveal" id="results">
         <article>
-          <h3 data-counter="150">0</h3>
-          <p>Projects delivered successfully</p>
+          <h3>150+</h3>
+          <p>Projects supported</p>
         </article>
         <article>
-          <h3 data-counter="96">0</h3>
-          <p>Client satisfaction score (%)</p>
+          <h3>96%</h3>
+          <p>Client satisfaction rate</p>
         </article>
         <article>
-          <h3 data-counter="40">0</h3>
-          <p>Average cost reduction (%)</p>
+          <h3>40%</h3>
+          <p>Average infrastructure savings</p>
         </article>
         <article>
-          <h3 data-counter="50">0</h3>
-          <p>Enterprise clients served</p>
+          <h3>3 wk</h3>
+          <p>Average time to first milestone</p>
         </article>
       </section>
 
-      <section class="section container" id="command-center">
+      <section class="section container" id="about">
         <div class="section-head reveal">
-          <p class="eyebrow">Consulting Dashboard</p>
-          <h2>IT consulting services</h2>
+          <p class="eyebrow">Why Companies Hire vistawave</p>
+          <h2>A consulting partner for leaders who need clarity, speed, and follow-through</h2>
           <p>
-            Real-time visibility into our consulting engagements, delivery metrics,
-            and service performance across all active projects.
+            Most consulting firms either stay too high-level or step in after the hardest decisions are already behind schedule.
+            vistawave closes that gap with senior practitioners who can shape the strategy, pressure-test the plan, and help your team execute.
           </p>
         </div>
-        <div class="command-grid">
-          <article class="command-card reveal">
-            <h3>Project Success Rate</h3>
-            <p class="metric-value"><span id="metric-fill-rate">--</span>%</p>
-            <p class="metric-sub">Engagements delivered on time and on budget</p>
+        <div class="about-grid">
+          <article class="about-card reveal">
+            <h3>Senior Practitioners Only</h3>
+            <p>
+              You work with experienced consultants who understand architecture, delivery, and stakeholder reality, not a junior team hiding behind slides.
+            </p>
           </article>
-          <article class="command-card reveal">
-            <h3>Time to Value</h3>
-            <p class="metric-value"><span id="metric-submission-days">--</span> weeks</p>
-            <p class="metric-sub">Average time from kickoff to first deliverable</p>
+          <article class="about-card reveal">
+            <h3>Business-First Technical Planning</h3>
+            <p>
+              We tie recommendations to budget, delivery risk, team capacity, and ROI so leaders can make better decisions with less guesswork.
+            </p>
           </article>
-          <article class="command-card reveal">
-            <h3>Active Consultants</h3>
-            <p class="metric-value"><span id="metric-qualified-candidates">--</span></p>
-            <p class="metric-sub">Experts deployed across client engagements</p>
+          <article class="about-card reveal">
+            <h3>Flexible Engagement Models</h3>
+            <p>
+              Start with an assessment, move into a defined project, or embed experts alongside your internal team when execution support is the real need.
+            </p>
           </article>
-          <article class="command-card reveal">
-            <h3>Active Projects</h3>
-            <p class="metric-value"><span id="metric-active-reqs">--</span></p>
-            <p class="metric-sub">Current consulting engagements in progress</p>
-          </article>
-        </div>
-        <div class="command-footer reveal">
-          <p class="api-status">
-            API status: <strong id="api-status-text">Checking...</strong>
-          </p>
-          <ul id="recommendation-list" class="recommendation-list"></ul>
-        </div>
-      </section>
-
-      <section class="section container" id="talent-pool">
-        <div class="section-head reveal">
-          <p class="eyebrow">Our Expertise</p>
-          <h2>Technology capabilities</h2>
-          <p>
-            Deep consulting expertise across cloud platforms, data engineering,
-            DevOps, cybersecurity, and AI. Our team stays current so you don't have to.
-          </p>
-        </div>
-        <div id="talent-pool-grid" class="talent-grid"></div>
-      </section>
-
-      <section class="section container" id="jobs">
-        <div class="section-head reveal">
-          <p class="eyebrow">Join Our Team</p>
-          <h2>Careers at vistawave</h2>
-          <p>
-            We're always looking for talented consultants and engineers to join
-            our growing team. Explore open positions and build your career with us.
-          </p>
-        </div>
-        <div class="hero-actions" style="justify-content: center; margin-top: 1.5rem;">
-          <a href="/jobs" class="btn">View Open Positions →</a>
         </div>
       </section>
 
       <section class="section container" id="services">
         <div class="section-head reveal">
           <p class="eyebrow">Core Services</p>
-          <h2>End-to-end IT consulting for modern enterprises</h2>
+          <h2>Consulting built around outcomes, not generic service lines</h2>
           <p>
-            From cloud migration to data strategy to digital transformation,
-            we deliver hands-on consulting that drives measurable business results.
+            Whether you are modernizing infrastructure, fixing data bottlenecks, or trying to turn an AI initiative into a usable operating capability,
+            the goal is the same: better decisions, faster delivery, and less wasted spend.
           </p>
         </div>
         <div class="card-grid">
           <article class="service-card reveal">
-            <h3>Cloud & Infrastructure</h3>
+            <h3>Cloud Modernization</h3>
             <p>
-              Migrate to the cloud, optimize existing environments, and build
-              scalable infrastructure that grows with your business.
+              Modernize legacy environments, reduce platform sprawl, and build a cloud foundation your team can actually operate.
             </p>
             <ul>
-              <li>Cloud migration & architecture</li>
-              <li>Multi-cloud strategy (AWS, Azure, GCP)</li>
-              <li>Infrastructure automation & DevOps</li>
+              <li>Migration planning that minimizes business disruption</li>
+              <li>Architecture reviews to reduce complexity and recurring cost</li>
+              <li>DevOps and automation that improve release speed and reliability</li>
             </ul>
           </article>
           <article class="service-card reveal">
-            <h3>Data & AI</h3>
+            <h3>Data Platforms & AI Execution</h3>
             <p>
-              Build modern data platforms, unlock actionable analytics, and
-              deploy AI solutions that create competitive advantage.
+              Turn fragmented data, brittle reporting, and pilot-stage AI work into systems that support better decisions and real operational value.
             </p>
             <ul>
-              <li>Data platform modernization</li>
-              <li>Business intelligence & analytics</li>
-              <li>AI/ML strategy & implementation</li>
+              <li>Modern data architecture for analytics, governance, and scale</li>
+              <li>Executive-ready reporting with reliable underlying pipelines</li>
+              <li>AI initiatives grounded in workflow impact, not hype</li>
             </ul>
           </article>
           <article class="service-card reveal">
-            <h3>Strategy & Transformation</h3>
+            <h3>Strategy, Planning & Delivery Leadership</h3>
             <p>
-              Align your IT roadmap with business objectives. We help you
-              prioritize investments and execute transformation at scale.
+              Make better investment decisions before delivery slows down, budgets drift, or priorities collide across teams.
             </p>
             <ul>
-              <li>IT strategy & roadmap planning</li>
-              <li>Digital transformation programs</li>
-              <li>Technology due diligence</li>
+              <li>Technology roadmaps tied to business goals and delivery reality</li>
+              <li>Transformation programs with clear milestones and ownership</li>
+              <li>Technical due diligence for growth, restructuring, or M&amp;A</li>
             </ul>
           </article>
         </div>
@@ -254,29 +202,29 @@
       <section class="section split-section" id="process">
         <div class="container split-grid">
           <div class="reveal">
-            <p class="eyebrow">How We Work</p>
-            <h2>A consulting process designed for impact</h2>
+            <p class="eyebrow">What Happens Next</p>
+            <h2>From first conversation to execution plan</h2>
             <p>
-              We combine deep technical expertise with a proven delivery framework
-              to ensure every engagement delivers measurable business value.
+              The first step is not a vague discovery call. It is a working conversation designed to understand constraints,
+              identify the highest-leverage opportunities, and define a practical path forward.
             </p>
           </div>
           <ol class="timeline reveal">
             <li>
-              <h3>Discover</h3>
-              <p>Assess current state, identify pain points, and define success metrics.</p>
+              <h3>Initial Discovery</h3>
+              <p>We review your goals, current blockers, delivery risks, and what is already in motion.</p>
             </li>
             <li>
-              <h3>Strategize</h3>
-              <p>Design a tailored roadmap with clear milestones and ROI projections.</p>
+              <h3>Assessment & Recommendations</h3>
+              <p>You get a focused point of view on where to simplify, where to invest, and what to sequence first.</p>
             </li>
             <li>
-              <h3>Execute</h3>
-              <p>Deploy expert consultants to implement solutions hands-on alongside your team.</p>
+              <h3>Delivery Plan</h3>
+              <p>We define scope, team shape, milestones, and the engagement model that best fits your situation.</p>
             </li>
             <li>
-              <h3>Optimize</h3>
-              <p>Measure results, refine approaches, and ensure long-term sustainability.</p>
+              <h3>Execution & Optimization</h3>
+              <p>We work alongside your team to move the work forward and keep the plan grounded in measurable outcomes.</p>
             </li>
           </ol>
         </div>
@@ -284,96 +232,147 @@
 
       <section class="section container" id="industries">
         <div class="section-head reveal">
-          <p class="eyebrow">Industry Focus</p>
-          <h2>Industries we transform</h2>
+          <p class="eyebrow">Where We Add the Most Value</p>
+          <h2>Especially effective in complex, regulated, and data-heavy environments</h2>
         </div>
         <div class="insight-grid">
           <article class="insight-card reveal">
             <h3>Healthcare</h3>
-            <p>EHR modernization, data interoperability, cloud compliance, and AI-powered clinical insights.</p>
+            <p>Modernize data flows, improve interoperability, and reduce delivery friction in regulated clinical and operational environments.</p>
           </article>
           <article class="insight-card reveal">
             <h3>Financial Services</h3>
-            <p>Risk platform modernization, cloud migration, regulatory compliance, and data analytics.</p>
+            <p>Strengthen cloud foundations, modernize risk and reporting workflows, and improve data confidence for regulated teams.</p>
           </article>
           <article class="insight-card reveal">
-            <h3>Technology</h3>
-            <p>Platform engineering, microservices architecture, DevOps maturity, and AI/ML strategy.</p>
+            <h3>SaaS & Technology</h3>
+            <p>Scale architecture, improve engineering throughput, and support product growth with more reliable platform operations.</p>
           </article>
           <article class="insight-card reveal">
             <h3>Manufacturing & Retail</h3>
-            <p>ERP modernization, supply chain analytics, omnichannel platforms, and IoT integration.</p>
+            <p>Connect systems, improve operational visibility, and build data foundations for forecasting, planning, and transformation.</p>
           </article>
         </div>
       </section>
 
-      <section class="section container" id="join-us">
+      <section class="section container" id="why-vistawave">
         <div class="section-head reveal">
-          <p class="eyebrow">Why Clients Choose vistawave</p>
-          <h2>The vistawave advantage</h2>
+          <p class="eyebrow">Why vistawave</p>
+          <h2>Built for decision-makers who want less consulting theater and more forward motion</h2>
         </div>
-        <div class="benefits-grid">
+        <div class="benefits-grid benefits-grid--compact">
           <article class="benefit-card reveal">
-            <h3>Practitioner-Led</h3>
+            <h3>Operator Mindset</h3>
             <p>
-              Our consultants are hands-on experts, not just advisors. They've built
-              and operated the systems they help you implement.
+              We optimize for practical decisions, delivery traction, and stakeholder confidence, not abstract frameworks.
             </p>
           </article>
           <article class="benefit-card reveal">
-            <h3>Rapid Time to Value</h3>
+            <h3>Faster Time to Value</h3>
             <p>
-              From kickoff to first deliverable in weeks, not months. We focus on
-              quick wins that build momentum for larger initiatives.
+              We look for the first milestone that proves value quickly and builds momentum for the larger program.
             </p>
           </article>
           <article class="benefit-card reveal">
-            <h3>Flexible Engagement</h3>
+            <h3>Strategy That Survives Execution</h3>
             <p>
-              Advisory, project-based, or embedded team models. Choose the engagement
-              structure that fits your needs and budget.
+              Recommendations are shaped around the team, budget, dependencies, and organizational reality you actually have.
             </p>
           </article>
           <article class="benefit-card reveal">
-            <h3>Measurable ROI</h3>
+            <h3>Right-Sized Engagements</h3>
             <p>
-              Every engagement is tied to business outcomes. We track and report on
-              the metrics that matter to your leadership.
+              Bring us in for an assessment, a targeted project, or embedded support where execution capacity is the constraint.
             </p>
           </article>
-          <article class="benefit-card reveal">
-            <h3>End-to-End Delivery</h3>
+        </div>
+      </section>
+
+      <section class="section split-section" id="proof">
+        <div class="container split-grid split-grid-proof">
+          <div class="reveal">
+            <p class="eyebrow">Representative Engagement Snapshots</p>
+            <h2>The kind of work buyers bring to us when the margin for error is small</h2>
             <p>
-              Strategy through implementation. We don't just write reports —
-              we execute alongside your team until goals are met.
+              These examples are intentionally anonymized. Replace them with named case studies and client logos when available.
+              Even in anonymized form, specific problem-to-outcome examples build more confidence than generic service language.
             </p>
-          </article>
-          <article class="benefit-card reveal">
-            <h3>Deep Partnerships</h3>
+          </div>
+          <div class="proof-grid reveal">
+            <article class="proof-card">
+              <h3>Cloud Cost and Reliability Reset</h3>
+              <p class="proof-label">SaaS Platform</p>
+              <p>A leadership team needed to stabilize cloud spend, improve reliability, and prepare for growth without slowing product delivery.</p>
+              <ul>
+                <li>Reviewed architecture and operating bottlenecks</li>
+                <li>Prioritized platform changes with immediate cost impact</li>
+                <li>Created an execution plan for engineering and operations leadership</li>
+              </ul>
+            </article>
+            <article class="proof-card">
+              <h3>Data Foundation for Executive Reporting</h3>
+              <p class="proof-label">Healthcare Organization</p>
+              <p>An internal team had reporting pain, fragmented data ownership, and no clear path from analytics demand to reliable delivery.</p>
+              <ul>
+                <li>Mapped data flow gaps and ownership issues</li>
+                <li>Defined a practical modernization sequence</li>
+                <li>Aligned technical work with stakeholder reporting priorities</li>
+              </ul>
+            </article>
+            <article class="proof-card">
+              <h3>Transformation Program De-Risking</h3>
+              <p class="proof-label">Enterprise Operations Team</p>
+              <p>A major initiative was at risk of slipping because priorities, scope, and delivery ownership were not aligned across teams.</p>
+              <ul>
+                <li>Clarified scope, milestones, and decision points</li>
+                <li>Identified the highest-risk dependencies early</li>
+                <li>Provided a delivery model leadership could actually support</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section container" id="leadership-access">
+        <div class="leadership-card reveal">
+          <div>
+            <p class="eyebrow">Senior Leadership Access</p>
+            <h2>You are not handed off after the first conversation</h2>
             <p>
-              We invest in long-term client relationships. Most of our work comes
-              from repeat clients and referrals.
+              Vistawave engagements are shaped by senior technical and delivery leadership from the start.
+              That means faster decisions, clearer guidance, and less loss of context between assessment, planning, and execution.
             </p>
-          </article>
+          </div>
+          <div class="leadership-points">
+            <div>
+              <strong>What buyers usually care about</strong>
+              <p>Who will actually show up, whether recommendations are practical, and how quickly the team can get to a confident next step.</p>
+            </div>
+            <div>
+              <strong>What vistawave optimizes for</strong>
+              <p>Direct access, useful judgment, and delivery plans built around business constraints rather than generic consulting process.</p>
+            </div>
+          </div>
         </div>
       </section>
 
       <section class="section testimonials">
         <div class="container">
           <div class="section-head reveal">
-            <p class="eyebrow">Client Voice</p>
-            <h2>What partners say</h2>
+            <p class="eyebrow">Client Perspective</p>
+            <h2>What clients value most</h2>
+            <p>
+              Replace these with named client quotes, logos, or short case studies as soon as available. Specific proof will lift trust substantially.
+            </p>
           </div>
           <div class="quote-grid">
             <blockquote class="reveal">
-              "vistawave helped us migrate our entire infrastructure to AWS in under three months.
-              Their team worked alongside ours and delivered a 40% reduction in hosting costs."
-              <cite>VP Engineering, SaaS Platform</cite>
+              "vistawave gave us something we were not getting from larger firms: clear technical judgment, realistic sequencing, and people who could work alongside our team instead of around it."
+              <cite>VP Engineering, B2B SaaS Platform</cite>
             </blockquote>
             <blockquote class="reveal">
-              "We brought vistawave in for a data strategy assessment and ended up partnering
-              on a full analytics platform build. The ROI was clear within the first quarter."
-              <cite>Director of Technology, Enterprise Healthcare</cite>
+              "The assessment was immediately useful. It surfaced what was actually slowing us down, what needed executive support, and what could be fixed quickly without a major reorg."
+              <cite>Director of Technology, Healthcare Organization</cite>
             </blockquote>
           </div>
         </div>
@@ -382,9 +381,9 @@
       <section class="section container" id="blog-preview">
         <div class="section-head reveal">
           <p class="eyebrow">vistawave Insights</p>
-          <h2>From Our Blog</h2>
+          <h2>Useful thinking for IT leaders</h2>
           <p>
-            Practical strategies on cloud, data, digital transformation, and IT leadership.
+            Practical guidance on cloud modernization, data strategy, transformation planning, and IT leadership.
           </p>
         </div>
         <div class="blog-preview-grid">
@@ -412,16 +411,18 @@
         <div class="container">
         <div class="contact-grid">
           <div class="reveal">
-            <p class="eyebrow">Get Started</p>
-            <h2>Book a free IT assessment</h2>
+            <p class="eyebrow">Book Your Free IT Assessment</p>
+            <h2>Get a clear view of the work, the risk, and the next best move</h2>
             <p>
-              Tell us about your technology challenges and goals. Our consulting
-              team will reach out with a tailored assessment and action plan.
+              Tell us where the initiative stands, what is blocking progress, and what success needs to look like.
+              We will follow up with a focused assessment and recommended next steps, not a generic sales pitch.
             </p>
             <ul class="contact-list">
-              <li>Email: kiran@vistawave.com</li>
-              <li>Phone: 9409230343</li>
+              <li>Email: recruiter@vistawavepro.com</li>
+              <li>Phone: (940) 923-0343</li>
+              <li>Response time: within 1 business day</li>
               <li>Coverage: US, Canada, and global delivery</li>
+              <li>Your information is used only to respond to your request.</li>
             </ul>
           </div>
           <form
@@ -437,7 +438,7 @@
             </label>
             <label>
               Work Email
-              <input type="email" name="email" placeholder="you@company.com" required />
+              <input type="email" name="work_email" placeholder="you@company.com" required />
             </label>
             <label>
               Company
@@ -445,15 +446,15 @@
             </label>
             <label>
               Area of Interest
-              <input type="text" name="role_title" placeholder="e.g. Cloud Migration, Data Strategy" required />
+              <input type="text" name="area_of_interest" placeholder="e.g. Cloud Migration, Data Strategy" required />
             </label>
             <label>
               Technologies Involved
-              <input type="text" name="technologies" placeholder="AWS, Azure, Snowflake, etc." required />
+              <input type="text" name="technologies_involved" placeholder="AWS, Azure, Snowflake, etc." required />
             </label>
             <label>
               Engagement Type
-              <select name="hiring_model" required>
+              <select name="engagement_type" required>
                 <option value="">Select one</option>
                 <option value="Advisory">Advisory / Assessment</option>
                 <option value="Project-Based">Project-Based Consulting</option>
@@ -462,18 +463,19 @@
               </select>
             </label>
             <label>
-              Team Size Needed
-              <input type="number" min="1" max="250" name="positions" placeholder="3" required />
+              Team Size
+              <input type="text" name="team_size" placeholder="e.g. 3 engineers, 1 architect" required />
             </label>
             <label>
               Desired Timeline
-              <input type="text" name="start_timeline" placeholder="Immediate / 2-4 weeks" required />
+              <input type="text" name="desired_timeline" placeholder="Immediate / 2-4 weeks" required />
             </label>
             <label>
               Project Goals
-              <textarea name="goals" rows="4" placeholder="Tell us about your challenges, objectives, and priorities" required></textarea>
+              <textarea name="project_goals" rows="4" placeholder="Tell us about your challenges, objectives, and priorities" required></textarea>
             </label>
             <button class="btn" type="submit">Request Free Assessment</button>
+            <p>No obligation. No recycled deck. Just a practical next-step assessment.</p>
             <p id="contact-status" class="contact-status" aria-live="polite"></p>
           </form>
         </div>
@@ -483,9 +485,32 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-wrap">
-        <p>© 2026 vistawave IT Consulting. All rights reserved.</p>
-        <a href="#top">Back to top</a>
+      <div class="container footer-stack">
+        <div class="footer-wrap footer-wrap-primary">
+          <div>
+            <p class="footer-title">vistawave IT Consulting</p>
+            <p class="footer-copy">Senior consulting support for cloud modernization, data platforms, AI execution, and transformation delivery.</p>
+          </div>
+          <div class="footer-links">
+            <a href="#about">About</a>
+            <a href="#services">Services</a>
+            <a href="/blog">Insights</a>
+            <a href="#contact">Contact</a>
+          </div>
+        </div>
+        <div class="footer-wrap footer-wrap-secondary">
+          <div class="footer-meta">
+            <span>Email: recruiter@vistawavepro.com</span>
+            <span>Phone: (940) 923-0343</span>
+            <span>Response: within 1 business day</span>
+          </div>
+          <div class="footer-links footer-links-legal">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="#top">Back to top</a>
+          </div>
+        </div>
+        <p class="footer-note">© 2026 vistawave IT Consulting. All rights reserved.</p>
       </div>
     </footer>
 

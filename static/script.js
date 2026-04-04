@@ -124,40 +124,23 @@ const contactForm = document.getElementById('contact-form');
 const contactStatus = document.getElementById('contact-status');
 const applyForm = document.getElementById('apply-form');
 const applyStatus = document.getElementById('apply-status');
-const applyJobId = document.getElementById('apply-job-id');
+const applyPosition = document.getElementById('apply-position');
+const apiBaseUrl = (document.body?.dataset.apiBaseUrl || '').replace(/\/$/, '');
+const thankYouAssessmentUrl = '/thank-you/assessment';
+const thankYouApplicationUrl = '/thank-you/application';
 
-const submitToFormspree = async (endpoint, payload, extraMeta = {}) => {
-  const formData = new FormData();
-  Object.entries(payload).forEach(([key, value]) => {
-    if (Array.isArray(value)) {
-      formData.append(key, value.join(', '));
-      return;
+const getApiUrl = (path) => (apiBaseUrl ? `${apiBaseUrl}${path}` : path);
+
+const readErrorMessage = async (response, fallbackMessage) => {
+  try {
+    const data = await response.json();
+    if (typeof data?.message === 'string' && data.message.trim()) {
+      return data.message;
     }
-    formData.append(key, String(value ?? ''));
-  });
-
-  Object.entries(extraMeta).forEach(([key, value]) => {
-    formData.append(key, String(value));
-  });
-
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: { Accept: 'application/json' },
-    body: formData,
-  });
-
-  if (!response.ok) {
-    let message = 'Form submission failed';
-    try {
-      const data = await response.json();
-      if (Array.isArray(data.errors) && data.errors[0]?.message) {
-        message = data.errors[0].message;
-      }
-    } catch (error) {
-      // Keep default error message.
-    }
-    throw new Error(message);
+  } catch (error) {
+    // Keep fallback below.
   }
+  return fallbackMessage;
 };
 
 const setMetricValue = (el, value, formatter = (v) => String(v)) => {
@@ -223,9 +206,8 @@ const renderJobs = (jobs) => {
 
   document.querySelectorAll('.apply-job').forEach((btn) => {
     btn.addEventListener('click', (e) => {
-      const jobId = e.target.dataset.jobId;
       const jobTitle = e.target.dataset.jobTitle;
-      applyJobId.value = jobId;
+      if (applyPosition) applyPosition.value = jobTitle;
       document.querySelector('#apply').scrollIntoView({ behavior: 'smooth' });
       if (applyStatus) applyStatus.textContent = `Applying for: ${jobTitle}`;
     });
@@ -236,7 +218,7 @@ const loadStatus = async () => {
   if (!apiStatusText) return;
 
   try {
-    const response = await fetch('/api/v1/status', { headers: { Accept: 'application/json' } });
+    const response = await fetch(getApiUrl('/api/v1/status'), { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error('Status unavailable');
     const data = await response.json();
     apiStatusText.textContent = `Online · ${data.version} · ${new Date(data.timestamp).toLocaleTimeString()}`;
@@ -247,7 +229,7 @@ const loadStatus = async () => {
 
 const loadMetrics = async () => {
   try {
-    const response = await fetch('/api/v1/metrics', { headers: { Accept: 'application/json' } });
+    const response = await fetch(getApiUrl('/api/v1/metrics'), { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error('Metrics unavailable');
     const data = await response.json();
     renderMetrics(data);
@@ -258,7 +240,7 @@ const loadMetrics = async () => {
 
 const loadTalentPool = async () => {
   try {
-    const response = await fetch('/api/v1/talent-pool', { headers: { Accept: 'application/json' } });
+    const response = await fetch(getApiUrl('/api/v1/talent-pool'), { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error('Talent pool unavailable');
     const data = await response.json();
     renderTalentPool(data);
@@ -269,7 +251,7 @@ const loadTalentPool = async () => {
 
 const loadJobs = async () => {
   try {
-    const response = await fetch('/api/v1/jobs', { headers: { Accept: 'application/json' } });
+    const response = await fetch(getApiUrl('/api/v1/jobs'), { headers: { Accept: 'application/json' } });
     if (!response.ok) throw new Error('Jobs unavailable');
     const data = await response.json();
     renderJobs(data.jobs);
@@ -284,7 +266,7 @@ const connectLiveMetrics = () => {
     return;
   }
 
-  const eventSource = new EventSource('/api/v1/events');
+  const eventSource = new EventSource(getApiUrl('/api/v1/events'));
   eventSource.addEventListener('metrics', (event) => {
     try {
       const payload = JSON.parse(event.data);
@@ -305,25 +287,21 @@ if (contactForm) {
     event.preventDefault();
 
     const formData = new FormData(contactForm);
-    const technologiesRaw = String(formData.get('technologies') || '').trim();
     const payload = {
       name: String(formData.get('name') || '').trim(),
-      email: String(formData.get('email') || '').trim(),
+      work_email: String(formData.get('work_email') || '').trim(),
       company: String(formData.get('company') || '').trim(),
-      role_title: String(formData.get('role_title') || '').trim(),
-      technologies: technologiesRaw
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean),
-      hiring_model: String(formData.get('hiring_model') || '').trim(),
-      positions: Number(formData.get('positions') || 1),
-      start_timeline: String(formData.get('start_timeline') || '').trim(),
-      goals: String(formData.get('goals') || '').trim(),
+      area_of_interest: String(formData.get('area_of_interest') || '').trim(),
+      technologies_involved: String(formData.get('technologies_involved') || '').trim(),
+      engagement_type: String(formData.get('engagement_type') || '').trim(),
+      team_size: String(formData.get('team_size') || '').trim(),
+      desired_timeline: String(formData.get('desired_timeline') || '').trim(),
+      project_goals: String(formData.get('project_goals') || '').trim(),
     };
 
-    if (!payload.technologies.length) {
+    if (!payload.technologies_involved) {
       if (contactStatus) {
-        contactStatus.textContent = 'Please provide at least one technology in the technologies field.';
+        contactStatus.textContent = 'Please provide the technologies involved.';
         contactStatus.classList.add('is-error');
       }
       return;
@@ -334,35 +312,29 @@ if (contactForm) {
       contactStatus.classList.remove('is-error', 'is-success');
     }
 
-    const formspreeEndpoint = (contactForm.dataset.formspreeEndpoint || '').trim();
-
     try {
-      if (formspreeEndpoint) {
-        await submitToFormspree(formspreeEndpoint, payload, {
-          form_type: 'staffing-request',
-        });
-      } else {
-        const response = await fetch('/api/v1/staffing-request', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+      const response = await fetch(getApiUrl('/api/v1/staffing-request'), {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
 
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to submit staffing request');
-        }
+      if (!response.ok) {
+        throw new Error(await readErrorMessage(response, 'Failed to submit assessment request'));
       }
 
       if (contactStatus) {
-        contactStatus.textContent = 'Request submitted! Our recruiting team will reach out within 24 hours.';
+        contactStatus.textContent = 'Request submitted. We will reach out within 24 hours.';
         contactStatus.classList.add('is-success');
       }
       contactForm.reset();
       loadMetrics();
+      window.setTimeout(() => {
+        window.location.assign(thankYouAssessmentUrl);
+      }, 500);
     } catch (error) {
       if (contactStatus) {
         contactStatus.textContent = error.message || 'Unable to submit request right now.';
@@ -377,25 +349,19 @@ if (applyForm) {
     event.preventDefault();
 
     const formData = new FormData(applyForm);
-    const skillsRaw = String(formData.get('skills') || '').trim();
-    const payload = {
-      full_name: String(formData.get('full_name') || '').trim(),
-      email: String(formData.get('email') || '').trim(),
-      phone: String(formData.get('phone') || '').trim(),
-      current_title: String(formData.get('current_title') || '').trim(),
-      years_experience: Number(formData.get('years_experience') || 0),
-      skills: skillsRaw
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean),
-      linkedin_url: String(formData.get('linkedin_url') || '').trim(),
-      resume_summary: String(formData.get('resume_summary') || '').trim(),
-      job_id: String(formData.get('job_id') || '').trim() || 'general',
-    };
+    const resumeFile = formData.get('resume');
 
-    if (!payload.skills.length) {
+    if (!(resumeFile instanceof File) || !resumeFile.name) {
       if (applyStatus) {
-        applyStatus.textContent = 'Please provide at least one skill.';
+        applyStatus.textContent = 'Please attach your resume PDF.';
+        applyStatus.classList.add('is-error');
+      }
+      return;
+    }
+
+    if (!resumeFile.name.toLowerCase().endsWith('.pdf')) {
+      if (applyStatus) {
+        applyStatus.textContent = 'Resume must be uploaded as a PDF.';
         applyStatus.classList.add('is-error');
       }
       return;
@@ -406,34 +372,27 @@ if (applyForm) {
       applyStatus.classList.remove('is-error', 'is-success');
     }
 
-    const formspreeEndpoint = (applyForm.dataset.formspreeEndpoint || '').trim();
-
     try {
-      if (formspreeEndpoint) {
-        await submitToFormspree(formspreeEndpoint, payload, {
-          form_type: 'job-application',
-        });
-      } else {
-        const response = await fetch('/api/v1/apply', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-          },
-          body: JSON.stringify(payload),
-        });
+      const response = await fetch(getApiUrl('/api/v1/apply'), {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+        },
+        body: formData,
+      });
 
-        const data = await response.json();
-        if (!response.ok) {
-          throw new Error(data.message || 'Failed to submit application');
-        }
+      if (!response.ok) {
+        throw new Error(await readErrorMessage(response, 'Failed to submit application'));
       }
 
       if (applyStatus) {
-        applyStatus.textContent = 'Application submitted! Check your email for updates.';
+        applyStatus.textContent = 'Application submitted. Our team will review it shortly.';
         applyStatus.classList.add('is-success');
       }
       applyForm.reset();
+      window.setTimeout(() => {
+        window.location.assign(thankYouApplicationUrl);
+      }, 500);
     } catch (error) {
       if (applyStatus) {
         applyStatus.textContent = error.message || 'Unable to submit application right now.';

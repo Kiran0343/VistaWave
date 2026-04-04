@@ -3,18 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IT Consulting Blog | vistawave</title>
+    <title>Privacy Policy | vistawave</title>
     <meta
       name="description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership. From vistawave IT Consulting."
+      content="Learn how vistawave collects, uses, and protects information submitted through the website and inquiry forms."
     />
-    <meta property="og:title" content="IT Consulting Blog | vistawave" />
-    <meta
-      property="og:description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.url }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,18 +17,6 @@
     />
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": "vistawave IT Consulting Blog",
-      "description": "Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "vistawave IT Consulting"
-      }
-    }
-    </script>
   </head>
   <body>
     <header class="site-header" id="top">
@@ -51,10 +33,9 @@
           <span aria-hidden="true">☰</span>
         </button>
         <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-          <a href="/#about">About</a>
-          <a href="/#services">Services</a>
+          <a href="/">Home</a>
+          <a href="/blog">Blog</a>
           <a href="/jobs">Careers</a>
-          <a href="/blog" aria-current="page">Blog</a>
           <a href="/#contact">Contact</a>
           <a href="/#contact" class="nav-cta">Get Started</a>
         </nav>
@@ -64,33 +45,58 @@
     <main>
       <section class="blog-hero">
         <div class="container">
-          <p class="eyebrow">vistawave Insights</p>
-          <h1>IT Consulting Blog</h1>
+          <p class="eyebrow">Legal</p>
+          <h1>Privacy Policy</h1>
           <p class="lead">
-            Practical strategies on cloud, data, digital transformation, and
-            IT leadership for modern enterprises.
+            This page explains what information vistawave collects through the website, how it is used, and how to contact us with privacy questions.
           </p>
         </div>
       </section>
 
-      <section class="section container">
-        <div class="blog-post-list">
-          {% for post in posts %}
-          <article class="post-card reveal">
-            <div class="post-card-meta">
-              <span class="post-category">{{ post.category }}</span>
-              <span class="post-date">{{ post.published_display }}</span>
-              <span class="post-read-time">{{ post.reading_time }}</span>
-            </div>
-            <h2 class="post-title">
-              <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
-            </h2>
-            <p class="post-excerpt">{{ post.excerpt }}</p>
-            <a href="/blog/{{ post.slug }}" class="btn btn-secondary btn-small">
-              Read Article →
-            </a>
-          </article>
-          {% endfor %}
+      <section class="policy-shell">
+        <div class="container policy-panel article-prose">
+          <p><strong>Effective date:</strong> April 4, 2026</p>
+
+          <h2>Information We Collect</h2>
+          <p>
+            We collect information you provide directly through contact forms, assessment requests, and job application forms. This may include your name,
+            business contact details, company information, project details, and uploaded resume files.
+          </p>
+
+          <h2>How We Use Information</h2>
+          <p>
+            We use submitted information to respond to inquiries, evaluate consulting opportunities, review job applications, and communicate with you about the request you initiated.
+          </p>
+
+          <h2>Resume and File Uploads</h2>
+          <p>
+            Resume files submitted through the careers form are stored for recruiting review and internal evaluation. Access is limited to people involved in reviewing applications.
+          </p>
+
+          <h2>Sharing of Information</h2>
+          <p>
+            We do not sell personal information. We may share information with service providers that help us operate the website, send email notifications, or store files securely.
+          </p>
+
+          <h2>Retention</h2>
+          <p>
+            We retain inquiry and application information for as long as reasonably necessary to respond, evaluate opportunities, maintain records, and meet legal or operational obligations.
+          </p>
+
+          <h2>Security</h2>
+          <p>
+            We use reasonable administrative and technical measures to protect information submitted through the website. No internet transmission or storage system is guaranteed to be fully secure.
+          </p>
+
+          <h2>Your Choices</h2>
+          <p>
+            If you want to request access, correction, or deletion of information you submitted through the website, contact us using the email below.
+          </p>
+
+          <h2>Contact</h2>
+          <p>
+            Questions about this policy can be sent to kiran@vistawave.com.
+          </p>
         </div>
       </section>
     </main>

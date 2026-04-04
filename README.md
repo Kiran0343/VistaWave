@@ -110,6 +110,25 @@ Set these in your production environment:
 ```bash
 FLASK_ENV=production
 SECRET_KEY=your-production-secret-key
+API_BASE_URL=
+CALENDAR_BOOKING_URL=
+ALLOWED_CORS_ORIGINS=https://vistawavepro.com,https://www.vistawavepro.com
+NOTIFICATION_TO_EMAILS=kiran@vistawave.com
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USERNAME=your-gmail-address@gmail.com
+SMTP_PASSWORD=your-gmail-app-password
+SMTP_FROM_EMAIL=your-gmail-address@gmail.com
+SMTP_USE_TLS=true
+SMTP_USE_SSL=false
+RESUME_STORAGE_BACKEND=local
+RESUME_UPLOAD_DIR=storage/resumes
+RESUME_MAX_BYTES=5242880
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+S3_BUCKET_NAME=
+S3_REGION=
+S3_PUBLIC_BASE_URL=
 CRISP_WEBSITE_ID=your_crisp_website_id
 ```
 
@@ -223,7 +242,7 @@ The app now includes a comprehensive API layer for both companies and job seeker
 - `GET /api/v1/metrics` - cached staffing metrics payload (fill rate, time-to-fill, etc.)
 - `GET /api/v1/talent-pool` - live technology talent availability snapshot
 - `GET /api/v1/events` - realtime SSE stream for dashboard updates
-- `POST /api/v1/staffing-request` - validated staffing request intake endpoint
+- `POST /api/v1/staffing-request` - validated free IT assessment intake endpoint with email notification
 
 Example staffing request:
 
@@ -232,14 +251,14 @@ curl -X POST http://localhost:5000/api/v1/staffing-request \
   -H "Content-Type: application/json" \
   -d '{
     "name":"Alex Rivera",
-    "email":"alex@example.com",
+    "work_email":"alex@example.com",
     "company":"Northstar Labs",
-    "role_title":"Senior Data Engineer",
-    "technologies":["Python","AWS","Snowflake"],
-    "hiring_model":"Contract-to-Hire",
-    "positions":3,
-    "start_timeline":"2-4 weeks",
-    "goals":"Build a modern data platform and improve analytics reliability."
+    "area_of_interest":"Cloud modernization",
+    "technologies_involved":"AWS, Terraform, Kubernetes",
+    "engagement_type":"Project-Based Consulting",
+    "team_size":"4 engineers",
+    "desired_timeline":"2-4 weeks",
+    "project_goals":"Build a modern platform foundation and improve delivery reliability."
   }'
 ```
 
@@ -247,23 +266,61 @@ curl -X POST http://localhost:5000/api/v1/staffing-request \
 
 - `GET /api/v1/jobs` - browse all open job postings
 - `GET /api/v1/jobs/<job_id>` - get specific job details
-- `POST /api/v1/apply` - submit job application with resume and skills
+- `POST /api/v1/apply` - submit multipart job application with PDF resume storage and email notification
 
 Example job application:
 
 ```bash
 curl -X POST http://localhost:5000/api/v1/apply \
-  -H "Content-Type: application/json" \
-  -d '{
-    "full_name":"Jamie Chen",
-    "email":"jamie@example.com",
-    "phone":"+1 (555) 123-4567",
-    "current_title":"Senior Engineer",
-    "years_experience":6,
-    "skills":["Python","AWS","PostgreSQL"],
-    "linkedin_url":"https://linkedin.com/in/jamiechen",
-    "resume_summary":"Experienced backend engineer with 6 years building scalable systems.",
-    "job_id":"job_001"
+  -H "Accept: application/json" \
+  -F "name=Jamie Chen" \
+  -F "email=jamie@example.com" \
+  -F "phone=+1 (555) 123-4567" \
+  -F "position=Senior Python Backend Engineer" \
+  -F "linkedin_url=https://linkedin.com/in/jamiechen" \
+  -F "message=Experienced backend engineer interested in platform modernization work." \
+  -F "resume=@/path/to/resume.pdf;type=application/pdf"
+```
+
+## Forms, Email, and Storage
+
+### Contact / Free IT Assessment form
+
+- Frontend submits JSON to `POST /api/v1/staffing-request`
+- Backend validates the payload with Pydantic
+- Backend sends an email notification to `kiran@vistawave.com` using SMTP
+
+### Careers / Job Application form
+
+- Frontend submits `multipart/form-data` to `POST /api/v1/apply`
+- Backend validates applicant fields, enforces PDF-only resume uploads, and stores the file
+- Backend emails applicant details plus the saved resume location
+
+### Email delivery recommendation
+
+- Gmail SMTP with an app password works for low-volume traffic and is already supported by the app
+- For production reliability, prefer a transactional provider such as Postmark, Resend, SendGrid, or Amazon SES
+- To switch providers later, keep the same SMTP environment variables and update only the provider credentials
+
+### Resume storage recommendation
+
+- `RESUME_STORAGE_BACKEND=local` stores PDFs under `storage/resumes`
+- Local storage is acceptable for development only
+- Render disks are ephemeral, so production should use `RESUME_STORAGE_BACKEND=s3`
+- When S3 is enabled, configure `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `S3_BUCKET_NAME`, `S3_REGION`, and optionally `S3_PUBLIC_BASE_URL`
+
+### Cross-origin setup
+
+- Allowed origins are controlled by `ALLOWED_CORS_ORIGINS`
+- The default value already allows `https://vistawavepro.com` and `https://www.vistawavepro.com`
+- If your frontend calls the Render service directly, set `API_BASE_URL` to your Render backend origin
+
+### Thank-you flow and calendar CTA
+
+- Successful assessment submissions redirect to `/thank-you/assessment`
+- Successful job applications redirect to `/thank-you/application`
+- Set `CALENDAR_BOOKING_URL` to your Calendly, Microsoft Bookings, or other scheduling link to show a direct booking CTA on those pages
+- If `CALENDAR_BOOKING_URL` is not set, the thank-you page falls back to an email CTA
 
 ## Security
 

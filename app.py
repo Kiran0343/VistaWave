@@ -1,11 +1,14 @@
 import os
 import json
 import logging
+import smtplib
 import time
+from pathlib import Path
 from uuid import uuid4
 from datetime import datetime, timezone
 from collections import deque
 from logging.handlers import RotatingFileHandler
+from email.message import EmailMessage
 from flask import Flask, render_template, jsonify, request, Response, stream_with_context
 from flask_caching import Cache
 from flask_compress import Compress
@@ -13,6 +16,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pydantic import BaseModel, EmailStr, Field, ValidationError
 from werkzeug.exceptions import HTTPException
+from werkzeug.utils import secure_filename
 from config import config
 from blog_posts import BLOG_POSTS
 
@@ -26,28 +30,192 @@ class StaffingInquiry(BaseModel):
     """Validated staffing request from hiring companies."""
 
     name: str = Field(min_length=2, max_length=120)
-    email: EmailStr
+    work_email: EmailStr
     company: str = Field(min_length=2, max_length=120)
-    role_title: str = Field(min_length=2, max_length=120)
-    technologies: list[str] = Field(min_length=1, max_length=12)
-    hiring_model: str = Field(min_length=2, max_length=80)
-    positions: int = Field(ge=1, le=250)
-    start_timeline: str = Field(min_length=2, max_length=80)
-    goals: str = Field(min_length=10, max_length=3000)
+    area_of_interest: str = Field(min_length=2, max_length=160)
+    technologies_involved: str = Field(min_length=2, max_length=1000)
+    engagement_type: str = Field(min_length=2, max_length=80)
+    team_size: str = Field(min_length=1, max_length=80)
+    desired_timeline: str = Field(min_length=2, max_length=120)
+    project_goals: str = Field(min_length=10, max_length=3000)
 
 
 class JobApplication(BaseModel):
     """Validated job application from job seekers."""
 
-    full_name: str = Field(min_length=2, max_length=120)
+    name: str = Field(min_length=2, max_length=120)
     email: EmailStr
     phone: str = Field(min_length=10, max_length=20)
-    current_title: str = Field(min_length=2, max_length=120)
-    years_experience: int = Field(ge=0, le=60)
-    skills: list[str] = Field(min_length=1, max_length=15)
+    position: str = Field(min_length=2, max_length=160)
     linkedin_url: str = Field(min_length=5, max_length=500)
-    resume_summary: str = Field(min_length=20, max_length=2000)
-    job_id: str = Field(min_length=1, max_length=50)
+    message: str = Field(min_length=10, max_length=2000)
+
+
+def create_directory_if_missing(path_value):
+    Path(path_value).mkdir(parents=True, exist_ok=True)
+
+
+def get_request_origin():
+    return request.headers.get('Origin', '').rstrip('/')
+
+
+def get_allowed_origin(app):
+    origin = get_request_origin()
+    if origin and origin in app.config['ALLOWED_CORS_ORIGINS']:
+        return origin
+    return None
+
+
+def add_cors_headers(response, app):
+    origin = get_allowed_origin(app)
+    if origin:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Vary'] = 'Origin'
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+    return response
+
+
+def build_resume_filename(applicant_name, original_filename):
+    safe_name = secure_filename(applicant_name) or 'applicant'
+    extension = Path(original_filename).suffix.lower() or '.pdf'
+    timestamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
+    return f'{timestamp}-{uuid4().hex[:10]}-{safe_name}{extension}'
+
+
+def validate_resume_upload(uploaded_file):
+    if uploaded_file is None or not uploaded_file.filename:
+        raise ValueError('Resume PDF is required')
+
+    extension = Path(uploaded_file.filename).suffix.lower()
+    if extension != '.pdf':
+        raise ValueError('Resume must be a PDF file')
+
+    content_type = (uploaded_file.mimetype or '').lower()
+    if content_type and content_type not in {'application/pdf', 'application/x-pdf'}:
+        raise ValueError('Resume must be uploaded as a PDF')
+
+
+def upload_resume_to_s3(app, storage_key, file_bytes, content_type):
+    import importlib
+
+    boto3 = importlib.import_module('boto3')
+
+    client = boto3.client(
+        's3',
+        region_name=app.config['S3_REGION'],
+        aws_access_key_id=app.config['AWS_ACCESS_KEY_ID'],
+        aws_secret_access_key=app.config['AWS_SECRET_ACCESS_KEY']
+    )
+    extra_args = {
+        'ContentType': content_type,
+    }
+    if app.config.get('S3_SERVER_SIDE_ENCRYPTION'):
+        extra_args['ServerSideEncryption'] = app.config['S3_SERVER_SIDE_ENCRYPTION']
+
+    client.put_object(
+        Bucket=app.config['S3_BUCKET_NAME'],
+        Key=storage_key,
+        Body=file_bytes,
+        **extra_args
+    )
+
+    public_base_url = app.config.get('S3_PUBLIC_BASE_URL', '').rstrip('/')
+    if public_base_url:
+        return f'{public_base_url}/{storage_key}'
+
+    return f's3://{app.config["S3_BUCKET_NAME"]}/{storage_key}'
+
+
+def store_resume(app, uploaded_file, applicant_name):
+    validate_resume_upload(uploaded_file)
+
+    file_bytes = uploaded_file.read()
+    if len(file_bytes) > app.config['RESUME_MAX_BYTES']:
+        raise ValueError('Resume exceeds the maximum allowed size')
+
+    uploaded_file.stream.seek(0)
+    filename = build_resume_filename(applicant_name, uploaded_file.filename)
+    storage_key = f'resumes/{filename}'
+    content_type = uploaded_file.mimetype or 'application/pdf'
+
+    if app.config['RESUME_STORAGE_BACKEND'] == 's3':
+        location = upload_resume_to_s3(app, storage_key, file_bytes, content_type)
+        return {
+            'filename': filename,
+            'storage_backend': 's3',
+            'storage_key': storage_key,
+            'location': location,
+            'content_type': content_type,
+            'size_bytes': len(file_bytes)
+        }
+
+    create_directory_if_missing(app.config['RESUME_UPLOAD_DIR'])
+    destination = Path(app.config['RESUME_UPLOAD_DIR']) / filename
+    destination.write_bytes(file_bytes)
+    return {
+        'filename': filename,
+        'storage_backend': 'local',
+        'storage_key': str(destination),
+        'location': str(destination),
+        'content_type': content_type,
+        'size_bytes': len(file_bytes)
+    }
+
+
+def format_email_body(title, rows):
+    lines = [title, '']
+    for label, value in rows:
+        lines.append(f'{label}: {value}')
+    return '\n'.join(lines)
+
+
+def send_notification_email(app, subject, body, reply_to=None):
+    recipients = app.config['NOTIFICATION_TO_EMAILS']
+    if not recipients:
+        raise RuntimeError('Notification recipient email is not configured')
+
+    message = EmailMessage()
+    message['Subject'] = subject
+    message['From'] = app.config['SMTP_FROM_EMAIL']
+    message['To'] = ', '.join(recipients)
+    if reply_to:
+        message['Reply-To'] = reply_to
+    message.set_content(body)
+
+    if app.config['SMTP_USE_SSL']:
+        smtp_client = smtplib.SMTP_SSL(
+            app.config['SMTP_HOST'],
+            app.config['SMTP_PORT'],
+            timeout=app.config['SMTP_TIMEOUT_SECONDS']
+        )
+    else:
+        smtp_client = smtplib.SMTP(
+            app.config['SMTP_HOST'],
+            app.config['SMTP_PORT'],
+            timeout=app.config['SMTP_TIMEOUT_SECONDS']
+        )
+
+    with smtp_client as server:
+        server.ehlo()
+        if app.config['SMTP_USE_TLS'] and not app.config['SMTP_USE_SSL']:
+            server.starttls()
+            server.ehlo()
+        if app.config['SMTP_USERNAME']:
+            server.login(app.config['SMTP_USERNAME'], app.config['SMTP_PASSWORD'])
+        server.send_message(message)
+
+
+def parse_job_application_form(form_data):
+    payload = {
+        'name': str(form_data.get('name') or '').strip(),
+        'email': str(form_data.get('email') or '').strip(),
+        'phone': str(form_data.get('phone') or '').strip(),
+        'position': str(form_data.get('position') or '').strip(),
+        'linkedin_url': str(form_data.get('linkedin_url') or '').strip(),
+        'message': str(form_data.get('message') or '').strip(),
+    }
+    return JobApplication.model_validate(payload)
 
 def create_app(config_name=None):
     """Application factory function"""
@@ -88,13 +256,22 @@ def create_app(config_name=None):
             "connect-src 'self' https://*.crisp.chat wss://*.crisp.chat; "
             "frame-src 'self' https://*.crisp.chat;"
         )
-        return response
+        return add_cors_headers(response, app)
+
+    @app.before_request
+    def handle_preflight_requests():
+        if request.method == 'OPTIONS':
+            response = app.make_default_options_response()
+            return add_cors_headers(response, app)
+        return None
 
     @app.context_processor
     def inject_template_settings():
         """Inject global template settings."""
         return {
             'crisp_website_id': app.config.get('CRISP_WEBSITE_ID', '').strip(),
+            'api_base_url': app.config.get('API_BASE_URL', '').rstrip('/'),
+            'calendar_booking_url': app.config.get('CALENDAR_BOOKING_URL', '').strip(),
         }
     
     # Routes
@@ -121,6 +298,56 @@ def create_app(config_name=None):
         return render_template(
             'jobs.html',
             formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', ''),
+        )
+
+    @app.route('/privacy')
+    @limiter.limit('120 per minute')
+    def privacy():
+        """Privacy policy page."""
+        return render_template('privacy.html')
+
+    @app.route('/terms')
+    @limiter.limit('120 per minute')
+    def terms():
+        """Terms of use page."""
+        return render_template('terms.html')
+
+    @app.route('/thank-you/assessment')
+    @limiter.limit('120 per minute')
+    def thank_you_assessment():
+        """Assessment thank-you page with next-step CTA."""
+        return render_template(
+            'thank_you.html',
+            page_title='Assessment Request Received | vistawave',
+            eyebrow='Thank You',
+            heading='Your assessment request is in.',
+            lead='We have your details and will follow up within one business day with a practical next-step recommendation.',
+            next_steps=[
+                'We review your current challenge, timeline, and delivery goals.',
+                'You receive a tailored follow-up rather than a generic sales sequence.',
+                'If you want to move faster, you can book time directly using the calendar link below.'
+            ],
+            primary_cta_label='Book a Strategy Call',
+            secondary_cta_label='Back to Home'
+        )
+
+    @app.route('/thank-you/application')
+    @limiter.limit('120 per minute')
+    def thank_you_application():
+        """Job application thank-you page with follow-up CTA."""
+        return render_template(
+            'thank_you.html',
+            page_title='Application Received | vistawave',
+            eyebrow='Application Submitted',
+            heading='Your application has been received.',
+            lead='Our team will review your background and reach out if there is a fit with current or upcoming roles.',
+            next_steps=[
+                'Your application and resume are now in review.',
+                'Qualified candidates are typically contacted within a few business days.',
+                'If you prefer a faster conversation, you can use the calendar link below.'
+            ],
+            primary_cta_label='Book an Intro Call',
+            secondary_cta_label='Explore Open Roles'
         )
 
     @app.route('/blog/<slug>')
@@ -397,7 +624,7 @@ def register_api_routes(app):
     @app.post('/api/v1/staffing-request')
     @limiter.limit('15 per hour')
     def api_staffing_request():
-        """Accept staffing request from hiring company."""
+        """Accept contact and assessment request from consulting buyer."""
         payload = request.get_json(silent=True) or {}
 
         try:
@@ -412,40 +639,73 @@ def register_api_routes(app):
         inquiry_record = {
             'id': str(uuid4()),
             'name': inquiry.name,
-            'email': inquiry.email,
+            'work_email': inquiry.work_email,
             'company': inquiry.company,
-            'role_title': inquiry.role_title,
-            'technologies': inquiry.technologies,
-            'hiring_model': inquiry.hiring_model,
-            'positions': inquiry.positions,
-            'start_timeline': inquiry.start_timeline,
-            'goals': inquiry.goals,
+            'area_of_interest': inquiry.area_of_interest,
+            'technologies_involved': inquiry.technologies_involved,
+            'engagement_type': inquiry.engagement_type,
+            'team_size': inquiry.team_size,
+            'desired_timeline': inquiry.desired_timeline,
+            'project_goals': inquiry.project_goals,
             'created_at': datetime.now(timezone.utc).isoformat()
         }
 
         app.extensions['staffing_inquiries'].appendleft(inquiry_record)
+
+        email_body = format_email_body('New Free IT Assessment Request', [
+            ('Submitted At', inquiry_record['created_at']),
+            ('Name', inquiry.name),
+            ('Work Email', inquiry.work_email),
+            ('Company', inquiry.company),
+            ('Area of Interest', inquiry.area_of_interest),
+            ('Technologies Involved', inquiry.technologies_involved),
+            ('Engagement Type', inquiry.engagement_type),
+            ('Team Size', inquiry.team_size),
+            ('Desired Timeline', inquiry.desired_timeline),
+            ('Project Goals', inquiry.project_goals),
+        ])
+
+        try:
+            send_notification_email(
+                app,
+                subject=f'New IT Assessment Request - {inquiry.company}',
+                body=email_body,
+                reply_to=str(inquiry.work_email)
+            )
+        except Exception as exc:
+            app.logger.exception('Failed to send staffing request email: %s', exc)
+            return jsonify({
+                'status': 'error',
+                'message': 'Request saved but notification email failed'
+            }), 502
+
         app.logger.info(
-            'New staffing request from %s (%s) for %s [%s]',
+            'New assessment request from %s (%s) for %s',
             inquiry.name,
-            inquiry.email,
-            inquiry.role_title,
-            ','.join(inquiry.technologies)
+            inquiry.work_email,
+            inquiry.company
         )
 
         return jsonify({
             'status': 'accepted',
-            'message': 'Staffing request captured successfully',
+            'message': 'Assessment request submitted successfully',
             'request_id': inquiry_record['id']
         }), 202
 
-    @app.post('/api/v1/apply')
+    @app.route('/api/v1/apply', methods=['POST'])
     @limiter.limit('30 per hour')
     def api_job_apply():
-        """Submit job application from job seeker."""
-        payload = request.get_json(silent=True) or {}
+        """Submit job application from job seeker with resume upload."""
+        resume_file = request.files.get('resume')
 
         try:
-            application = JobApplication.model_validate(payload)
+            application = parse_job_application_form(request.form)
+            resume_meta = store_resume(app, resume_file, application.name)
+        except ValueError as exc:
+            return jsonify({
+                'status': 'error',
+                'message': str(exc)
+            }), 400
         except ValidationError as exc:
             return jsonify({
                 'status': 'error',
@@ -455,25 +715,52 @@ def register_api_routes(app):
 
         application_record = {
             'id': str(uuid4()),
-            'full_name': application.full_name,
+            'name': application.name,
             'email': application.email,
             'phone': application.phone,
-            'current_title': application.current_title,
-            'years_experience': application.years_experience,
-            'skills': application.skills,
+            'position': application.position,
             'linkedin_url': application.linkedin_url,
-            'resume_summary': application.resume_summary,
-            'job_id': application.job_id,
+            'message': application.message,
+            'resume': resume_meta,
             'status': 'new',
             'created_at': datetime.now(timezone.utc).isoformat()
         }
 
         app.extensions['job_applications'].appendleft(application_record)
+
+        email_body = format_email_body('New Career Application', [
+            ('Submitted At', application_record['created_at']),
+            ('Name', application.name),
+            ('Email', application.email),
+            ('Phone', application.phone),
+            ('Position Applying For', application.position),
+            ('LinkedIn URL', application.linkedin_url),
+            ('Message', application.message),
+            ('Resume Storage', resume_meta['storage_backend']),
+            ('Resume Location', resume_meta['location']),
+            ('Resume Filename', resume_meta['filename']),
+            ('Resume Size (bytes)', resume_meta['size_bytes']),
+        ])
+
+        try:
+            send_notification_email(
+                app,
+                subject=f'New Job Application - {application.position} - {application.name}',
+                body=email_body,
+                reply_to=str(application.email)
+            )
+        except Exception as exc:
+            app.logger.exception('Failed to send application email: %s', exc)
+            return jsonify({
+                'status': 'error',
+                'message': 'Application saved but notification email failed'
+            }), 502
+
         app.logger.info(
-            'New job application from %s (%s) for job %s',
-            application.full_name,
+            'New job application from %s (%s) for %s',
+            application.name,
             application.email,
-            application.job_id
+            application.position
         )
 
         return jsonify({

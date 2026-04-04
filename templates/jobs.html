@@ -8,8 +8,6 @@
       name="description"
       content="Join vistawave as a technology consultant. Explore open positions across cloud, data, AI, and strategy."
     />
-    <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="{{ request.url }}" />
     <meta property="og:title" content="Careers | vistawave IT Consulting" />
     <meta
       property="og:description"
@@ -26,7 +24,7 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
   </head>
-  <body>
+  <body data-api-base-url="{{ api_base_url }}">
     <header class="site-header" id="top">
       <div class="container nav-wrap">
         <a href="/" class="brand" aria-label="vistawave home">
@@ -87,11 +85,12 @@
             id="apply-form"
             action="{{ formspree_apply_endpoint or '/api/v1/apply' }}"
             method="post"
+            enctype="multipart/form-data"
             data-formspree-endpoint="{{ formspree_apply_endpoint }}"
           >
             <label>
-              Full Name
-              <input type="text" name="full_name" placeholder="Your full name" required />
+              Name
+              <input type="text" name="name" placeholder="Your full name" required />
             </label>
             <label>
               Email
@@ -102,26 +101,21 @@
               <input type="tel" name="phone" placeholder="+1 (555) 000-0000" required />
             </label>
             <label>
-              Current Title
-              <input type="text" name="current_title" placeholder="e.g. Senior Engineer" required />
-            </label>
-            <label>
-              Years of Experience
-              <input type="number" min="0" max="60" name="years_experience" placeholder="5" required />
-            </label>
-            <label>
-              Key Skills
-              <input type="text" name="skills" placeholder="Python, AWS, React (comma-separated)" required />
+              Position Applying For
+              <input type="text" name="position" id="apply-position" placeholder="e.g. Senior Backend Engineer" required />
             </label>
             <label>
               LinkedIn Profile URL
               <input type="url" name="linkedin_url" placeholder="https://linkedin.com/in/yourprofile" required />
             </label>
             <label>
-              Professional Summary
-              <textarea name="resume_summary" rows="4" placeholder="Tell us about your background and what you're looking for" required></textarea>
+              Message
+              <textarea name="message" rows="4" placeholder="Tell us about your background and what you're looking for" required></textarea>
             </label>
-            <input type="hidden" name="job_id" id="apply-job-id" value="" />
+            <label>
+              Resume Upload (PDF)
+              <input type="file" name="resume" accept="application/pdf,.pdf" required />
+            </label>
             <button class="btn" type="submit">Submit Application</button>
             <p id="apply-status" class="contact-status" aria-live="polite"></p>
           </form>
@@ -130,9 +124,32 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container footer-wrap">
-        <p>© 2026 vistawave IT Consulting. All rights reserved.</p>
-        <a href="/">Back to Home</a>
+      <div class="container footer-stack">
+        <div class="footer-wrap footer-wrap-primary">
+          <div>
+            <p class="footer-title">vistawave IT Consulting</p>
+            <p class="footer-copy">Senior consulting support for cloud modernization, data platforms, AI execution, and transformation delivery.</p>
+          </div>
+          <div class="footer-links">
+            <a href="/">Home</a>
+            <a href="/blog">Insights</a>
+            <a href="/jobs">Careers</a>
+            <a href="/#contact">Contact</a>
+          </div>
+        </div>
+        <div class="footer-wrap footer-wrap-secondary">
+          <div class="footer-meta">
+            <span>Email: kiran@vistawave.com</span>
+            <span>Phone: (940) 923-0343</span>
+            <span>Response: within 1 business day</span>
+          </div>
+          <div class="footer-links footer-links-legal">
+            <a href="/privacy">Privacy</a>
+            <a href="/terms">Terms</a>
+            <a href="/">Back to Home</a>
+          </div>
+        </div>
+        <p class="footer-note">© 2026 vistawave IT Consulting. All rights reserved.</p>
       </div>
     </footer>
 
