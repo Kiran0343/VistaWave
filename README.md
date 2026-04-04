@@ -25,21 +25,31 @@ Modern, production-ready Flask application for a technology staffing firm with d
 ```
 vistawave/
 ├── app.py                  # Application factory
+├── blog_posts.py           # Blog content definitions
 ├── config.py              # Configuration management
 ├── wsgi.py                # WSGI entry point
 ├── gunicorn_config.py     # Gunicorn configuration
 ├── requirements.txt       # Python dependencies
 ├── Procfile               # Heroku/cloud deployment
+├── Dockerfile             # Container image definition
+├── docker-compose.yml     # Local container orchestration
 ├── .env.example           # Environment template
 ├── .gitignore             # Git ignore rules
 ├── templates/
 │   ├── index.html         # Home page
+│   ├── blog.html          # Blog listing page
+│   ├── blog_post.html     # Individual blog article page
+│   ├── jobs.html          # Careers and job application page
+│   ├── thank_you.html     # Post-submit thank-you page
+│   ├── privacy.html       # Privacy policy page
+│   ├── terms.html         # Terms page
 │   ├── 404.html           # Not found page
 │   ├── 400.html           # Bad request page
 │   └── 500.html           # Server error page
 ├── static/
-│   ├── styles.css         # CSS stylesheet
-│   └── script.js          # JavaScript
+│   ├── styles.css         # Main stylesheet
+│   ├── script.js          # Main JavaScript
+│   └── chat.js            # Crisp chat bootstrap
 └── logs/                  # Application logs (generated)
 ```
 
