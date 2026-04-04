@@ -3,18 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IT Consulting Blog | vistawave</title>
+    <title>Cookie Policy | vistawave</title>
     <meta
       name="description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership. From vistawave IT Consulting."
+      content="Understand how cookies and similar technologies are used on the vistawave website."
     />
-    <meta property="og:title" content="IT Consulting Blog | vistawave" />
-    <meta
-      property="og:description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.url }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,18 +17,6 @@
     />
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": "vistawave IT Consulting Blog",
-      "description": "Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "vistawave IT Consulting"
-      }
-    }
-    </script>
   </head>
   <body>
     <header class="site-header" id="top">
@@ -56,10 +38,9 @@
           </span>
         </button>
         <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-          <a href="/#about">About</a>
-          <a href="/#services">Services</a>
+          <a href="/">Home</a>
+          <a href="/blog">Blog</a>
           <a href="/jobs">Careers</a>
-          <a href="/blog" aria-current="page">Blog</a>
           <a href="/#contact">Contact</a>
           <a href="/#contact" class="nav-cta">Get Started</a>
         </nav>
@@ -69,33 +50,47 @@
     <main>
       <section class="blog-hero">
         <div class="container">
-          <p class="eyebrow">vistawave Insights</p>
-          <h1>IT Consulting Blog</h1>
+          <p class="eyebrow">Legal</p>
+          <h1>Cookie Policy</h1>
           <p class="lead">
-            Practical strategies on cloud, data, digital transformation, and
-            IT leadership for modern enterprises.
+            This page explains how Vistawave uses cookies and related technologies to improve website performance, measure engagement, and support core functionality.
           </p>
         </div>
       </section>
 
-      <section class="section container">
-        <div class="blog-post-list">
-          {% for post in posts %}
-          <article class="post-card reveal">
-            <div class="post-card-meta">
-              <span class="post-category">{{ post.category }}</span>
-              <span class="post-date">{{ post.published_display }}</span>
-              <span class="post-read-time">{{ post.reading_time }}</span>
-            </div>
-            <h2 class="post-title">
-              <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
-            </h2>
-            <p class="post-excerpt">{{ post.excerpt }}</p>
-            <a href="/blog/{{ post.slug }}" class="btn btn-secondary btn-small">
-              Read Article →
-            </a>
-          </article>
-          {% endfor %}
+      <section class="policy-shell">
+        <div class="container policy-panel article-prose">
+          <p><strong>Effective date:</strong> April 4, 2026</p>
+
+          <h2>What Cookies Are</h2>
+          <p>
+            Cookies are small text files stored on your device when you visit a website. They help websites recognize repeat visits, remember preferences, and understand how pages are used.
+          </p>
+
+          <h2>How We Use Cookies</h2>
+          <p>
+            Vistawave may use cookies or similar technologies to support site performance, improve user experience, maintain security, and understand which content or conversion paths are most useful.
+          </p>
+
+          <h2>Types of Cookies</h2>
+          <p>
+            The site may use essential cookies for basic functionality, analytics cookies to understand traffic and interaction patterns, and service-related cookies connected to tools used for chat, monitoring, or embedded services.
+          </p>
+
+          <h2>Third-Party Services</h2>
+          <p>
+            Some website features may rely on third-party services that place their own cookies or use similar storage technologies. Those providers manage their own policies and controls.
+          </p>
+
+          <h2>Your Choices</h2>
+          <p>
+            Most browsers allow you to manage, block, or delete cookies through browser settings. Restricting cookies may affect how certain parts of the website function.
+          </p>
+
+          <h2>Contact</h2>
+          <p>
+            Questions about this cookie policy can be sent to <a href="mailto:recruiter@vistawavepro.com">recruiter@vistawavepro.com</a>.
+          </p>
         </div>
       </section>
     </main>

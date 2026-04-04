@@ -312,6 +312,18 @@ def create_app(config_name=None):
         """Terms of use page."""
         return render_template('terms.html')
 
+    @app.route('/sitemap')
+    @limiter.limit('120 per minute')
+    def sitemap_page():
+        """Human-readable sitemap page."""
+        return render_template('sitemap.html')
+
+    @app.route('/cookie-policy')
+    @limiter.limit('120 per minute')
+    def cookie_policy():
+        """Cookie policy page."""
+        return render_template('cookie_policy.html')
+
     @app.route('/thank-you/assessment')
     @limiter.limit('120 per minute')
     def thank_you_assessment():

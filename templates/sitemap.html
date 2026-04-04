@@ -3,18 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>IT Consulting Blog | vistawave</title>
+    <title>Sitemap | vistawave</title>
     <meta
       name="description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership. From vistawave IT Consulting."
+      content="Browse the primary pages, legal resources, and conversion paths available on the vistawave IT Consulting website."
     />
-    <meta property="og:title" content="IT Consulting Blog | vistawave" />
-    <meta
-      property="og:description"
-      content="Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.url }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,18 +17,6 @@
     />
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Blog",
-      "name": "vistawave IT Consulting Blog",
-      "description": "Expert insights on IT consulting, cloud strategy, data transformation, and technology leadership.",
-      "publisher": {
-        "@type": "Organization",
-        "name": "vistawave IT Consulting"
-      }
-    }
-    </script>
   </head>
   <body>
     <header class="site-header" id="top">
@@ -56,10 +38,9 @@
           </span>
         </button>
         <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-          <a href="/#about">About</a>
-          <a href="/#services">Services</a>
+          <a href="/">Home</a>
+          <a href="/blog">Blog</a>
           <a href="/jobs">Careers</a>
-          <a href="/blog" aria-current="page">Blog</a>
           <a href="/#contact">Contact</a>
           <a href="/#contact" class="nav-cta">Get Started</a>
         </nav>
@@ -69,33 +50,44 @@
     <main>
       <section class="blog-hero">
         <div class="container">
-          <p class="eyebrow">vistawave Insights</p>
-          <h1>IT Consulting Blog</h1>
+          <p class="eyebrow">Navigation</p>
+          <h1>Sitemap</h1>
           <p class="lead">
-            Practical strategies on cloud, data, digital transformation, and
-            IT leadership for modern enterprises.
+            Browse key sections of the Vistawave IT Consulting website, including service entry points, legal pages, careers, and contact paths.
           </p>
         </div>
       </section>
 
-      <section class="section container">
-        <div class="blog-post-list">
-          {% for post in posts %}
-          <article class="post-card reveal">
-            <div class="post-card-meta">
-              <span class="post-category">{{ post.category }}</span>
-              <span class="post-date">{{ post.published_display }}</span>
-              <span class="post-read-time">{{ post.reading_time }}</span>
-            </div>
-            <h2 class="post-title">
-              <a href="/blog/{{ post.slug }}">{{ post.title }}</a>
-            </h2>
-            <p class="post-excerpt">{{ post.excerpt }}</p>
-            <a href="/blog/{{ post.slug }}" class="btn btn-secondary btn-small">
-              Read Article →
-            </a>
-          </article>
-          {% endfor %}
+      <section class="policy-shell">
+        <div class="container policy-panel article-prose">
+          <h2>Primary Pages</h2>
+          <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/#about">About Us</a></li>
+            <li><a href="/#services">Services</a></li>
+            <li><a href="/#industries">Industries</a></li>
+            <li><a href="/#contact">Book Free Assessment</a></li>
+          </ul>
+
+          <h2>Insights &amp; Careers</h2>
+          <ul>
+            <li><a href="/blog">Blog</a></li>
+            <li><a href="/jobs">Careers</a></li>
+          </ul>
+
+          <h2>Legal</h2>
+          <ul>
+            <li><a href="/privacy">Privacy Policy</a></li>
+            <li><a href="/terms">Terms of Service</a></li>
+            <li><a href="/cookie-policy">Cookie Policy</a></li>
+          </ul>
+
+          <h2>Contact</h2>
+          <p>
+            For consulting inquiries, hiring requests, or candidate conversations, contact
+            <a href="mailto:recruiter@vistawavepro.com">recruiter@vistawavepro.com</a> or call
+            <a href="tel:+19409230343">(940) 923-0343</a>.
+          </p>
         </div>
       </section>
     </main>
