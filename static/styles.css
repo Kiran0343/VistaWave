@@ -5,10 +5,24 @@
   --muted: #5e6470;
   --accent: #dc5c45;
   --accent-2: #0e7f80;
+  --page-max-width: 1260px;
+  --page-gutter: clamp(1.4rem, 3vw, 3rem);
   --line: rgba(24, 32, 43, 0.1);
   --radius: 18px;
   --shadow: 0 12px 32px rgba(24, 32, 43, 0.06), 0 2px 6px rgba(24, 32, 43, 0.04);
   --shadow-hover: 0 20px 44px rgba(24, 32, 43, 0.12), 0 4px 12px rgba(24, 32, 43, 0.06);
+}
+
+@media (max-width: 1200px) {
+  :root {
+    --page-gutter: clamp(1.1rem, 3.2vw, 2.4rem);
+  }
+}
+
+@media (max-width: 760px) {
+  :root {
+    --page-gutter: clamp(0.85rem, 4.6vw, 1.4rem);
+  }
 }
 
 * {
@@ -55,7 +69,7 @@ a {
 }
 
 .container {
-  width: min(1180px, calc(100% - clamp(3rem, 7vw, 7rem)));
+  width: min(var(--page-max-width), calc(100% - var(--page-gutter)));
   margin: 0 auto;
 }
 
@@ -283,7 +297,7 @@ a {
   content: "";
   position: absolute;
   inset: 1.4rem auto auto 50%;
-  width: min(1180px, calc(100% - clamp(3rem, 7vw, 7rem)));
+  width: min(var(--page-max-width), calc(100% - var(--page-gutter)));
   height: calc(100% - 2.2rem);
   transform: translateX(-50%);
   border-radius: 34px;

@@ -18,60 +18,81 @@
     <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
     <style>
-      html, body {
-        height: 100%;
+      .apply-section {
+        padding-top: 2.4rem;
+      }
+
+      .apply-shell {
+        grid-template-columns: minmax(280px, 0.95fr) minmax(320px, 1.05fr);
+        align-items: start;
+      }
+
+      .apply-panel {
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: var(--radius);
+        padding: 1.2rem 1.1rem;
+      }
+
+      .apply-panel h2 {
+        margin-top: 0;
+        margin-bottom: 0.4rem;
+      }
+
+      .apply-meta {
         margin: 0;
       }
 
-      body {
-        display: flex;
-        flex-direction: column;
+      .apply-points {
+        margin: 1rem 0 0;
+        padding-left: 1.05rem;
       }
 
-      .site-header {
+      .apply-points li {
+        margin-bottom: 0.45rem;
+      }
+
+      .acknowledge-label {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        font-weight: 600;
+      }
+
+      .acknowledge-label input[type="checkbox"] {
+        width: auto;
+        min-width: 16px;
+        height: 16px;
+        margin-top: 0.2rem;
         flex: 0 0 auto;
       }
 
-      main.container {
+      .acknowledge-label span {
         flex: 1 1 auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 0;
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
+        min-width: 0;
+        overflow-wrap: normal;
+        word-break: normal;
+        line-height: 1.35;
       }
 
-      .section {
-        width: 100%;
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
-      }
-
-      .contact-grid {
-        max-width: 560px !important;
-        gap: 0.5rem !important;
-      }
-
-      .reveal {
-        margin: 0 !important;
-        opacity: 1 !important;
-        transform: none !important;
+      @media (min-width: 900px) {
+        .acknowledge-label span {
+          white-space: nowrap;
+        }
       }
 
       .contact-form {
-        padding: 1rem 1.1rem !important;
-        gap: 0.6rem !important;
-        opacity: 1 !important;
+        border-radius: var(--radius);
       }
 
-      .contact-form label {
-        font-size: 0.88rem;
-      }
+      @media (max-width: 760px) {
+        .apply-section {
+          padding-top: 1.2rem;
+        }
 
-      .contact-form input,
-      .contact-form button {
-        font-size: 0.92rem;
+        .acknowledge-label {
+          gap: 0.55rem;
+        }
       }
     </style>
   </head>
@@ -106,66 +127,85 @@
       </div>
     </header>
 
-    <main class="container" style="padding-top: 1rem; padding-bottom: 2rem;">
-      <section class="section" style="padding-top: 0; padding-bottom: 0;">
-        <div class="contact-grid" style="grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; gap: 0.8rem;">
-          <div class="reveal" style="margin-bottom: 0;">
-            <p class="eyebrow" style="margin-bottom: 0.35rem;">Apply for Role</p>
-            <h2 style="margin-bottom: 0.2rem;">{{ job.title }}</h2>
-            <p style="margin-bottom: 0;">{{ job.company }} · {{ job.location }} · {{ job.type }}</p>
-          </div>
+    <main>
+      <section class="section contact-section apply-section">
+        <div class="container contact-grid apply-shell">
+          <aside class="apply-panel">
+            <p class="eyebrow">Apply for Role</p>
+            <h2>{{ job.title }}</h2>
+            <p class="apply-meta">{{ job.company }} · {{ job.location }} · {{ job.type }}</p>
+            <ul class="apply-points">
+              <li>Complete the form with your latest contact details.</li>
+              <li>Upload your resume in DOCX format only.</li>
+              <li>Add your LinkedIn profile so our recruiter can review your public experience.</li>
+            </ul>
+          </aside>
 
-          <form class="contact-form reveal" id="detailed-apply-form" action="/apply/{{ job.id }}" method="post" enctype="multipart/form-data" style="max-width: 560px; margin: 0 auto; display: grid; gap: 0.7rem;" onsubmit="return true;">
+          <form class="contact-form" id="detailed-apply-form" action="/apply/{{ job.id }}" method="post" enctype="multipart/form-data">
             <input type="hidden" name="position" value="{{ job.title }}" />
 
-            <div style="display:grid; gap:0.7rem;">
-              <label>
-                First Name
-                <input type="text" name="first_name" placeholder="First name" required />
-              </label>
-              <label>
-                Last Name
-                <input type="text" name="last_name" placeholder="Last name" required />
-              </label>
-              <label>
-                Phone Number
-                <input type="tel" name="phone_number" placeholder="+1 (555) 000-0000" required />
-              </label>
-              <label>
-                Email ID
-                <input type="email" name="email" placeholder="you@example.com" required />
-              </label>
-              <label>
-                Upload Resume (DOCX only)
-                <input type="file" name="resume" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
-              </label>
-              <label style="display:flex; align-items:center; gap:0.75rem; font-weight:600;">
-                <input type="checkbox" name="id_passport_acknowledged" value="true" required />
-                If selected for interview, I am willing to provide my ID and passport number.
-              </label>
-            </div>
+            {% if error %}
+            <p class="contact-status is-error" style="margin: 0;">{{ error }}</p>
+            {% endif %}
 
-            <button type="submit" id="apply-submit-btn" class="btn" style="margin-top: 0.2rem;">Submit Application</button>
+            <label>
+              First Name
+              <input type="text" name="first_name" placeholder="First name" value="{{ request.form.get('first_name', '') }}" required />
+            </label>
+            <label>
+              Last Name
+              <input type="text" name="last_name" placeholder="Last name" value="{{ request.form.get('last_name', '') }}" required />
+            </label>
+            <label>
+              Phone Number
+              <input type="tel" name="phone_number" placeholder="+1 (555) 000-0000" value="{{ request.form.get('phone_number', '') }}" required />
+            </label>
+            <label>
+              Email ID
+              <input type="email" name="email" placeholder="you@example.com" value="{{ request.form.get('email', '') }}" required />
+            </label>
+            <label>
+              LinkedIn Profile URL
+              <input type="url" name="linkedin_profile_url" placeholder="https://www.linkedin.com/in/your-profile" value="{{ request.form.get('linkedin_profile_url', '') }}" required />
+            </label>
+            <label>
+              Upload Resume (DOCX only)
+              <input type="file" name="resume" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+            </label>
+            <label class="acknowledge-label">
+              <input
+                type="checkbox"
+                name="id_passport_acknowledged"
+                value="true"
+                {% if request.form.get('id_passport_acknowledged') %}checked{% endif %}
+                required
+              />
+              <span>If selected for interview, I am willing to provide my ID and passport number.</span>
+            </label>
+
+            <button type="submit" id="apply-submit-btn" class="btn">Submit Application</button>
             <p id="apply-status" class="contact-status" aria-live="polite"></p>
           </form>
         </div>
       </section>
     </main>
 
+    {% include '_footer.html' %}
+
     <script>
       (function() {
         const initApplyForm = () => {
           const form = document.getElementById('detailed-apply-form');
-          const submitBtn = document.getElementById('apply-submit-btn');
           const applyStatus = document.getElementById('apply-status');
 
-          if (!form || !submitBtn) {
+          if (!form) {
             return;
           }
 
           form.addEventListener('submit', (event) => {
             const resumeFile = form.querySelector('input[name="resume"]').files[0];
             const email = String(form.querySelector('input[name="email"]').value || '').trim();
+            const linkedinProfile = String(form.querySelector('input[name="linkedin_profile_url"]').value || '').trim();
             const acknowledged = form.querySelector('input[name="id_passport_acknowledged"]').checked;
 
             if (!resumeFile) {
@@ -195,6 +235,15 @@
               return;
             }
 
+            if (!/^https?:\/\/(www\.)?linkedin\.com\//i.test(linkedinProfile)) {
+              event.preventDefault();
+              if (applyStatus) {
+                applyStatus.textContent = 'Please enter a valid LinkedIn profile URL.';
+                applyStatus.classList.add('is-error');
+              }
+              return;
+            }
+
             if (!acknowledged) {
               event.preventDefault();
               if (applyStatus) {
@@ -218,5 +267,13 @@
         }
       })();
     </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {% if crisp_website_id %}
+    <script
+      src="{{ url_for('static', filename='chat.js') }}"
+      data-crisp-website-id="{{ crisp_website_id }}"
+      defer
+    ></script>
+    {% endif %}
   </body>
 </html>

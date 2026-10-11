@@ -10,6 +10,9 @@ from datetime import datetime, timezone
 from collections import deque
 from logging.handlers import RotatingFileHandler
 from email.message import EmailMessage
+from urllib.parse import urlparse
+from urllib.request import Request, urlopen
+from urllib.error import HTTPError, URLError
 from flask import Flask, render_template, jsonify, request, Response, stream_with_context, redirect, url_for
 from flask_caching import Cache
 from flask_compress import Compress
@@ -64,6 +67,7 @@ class DetailedJobApplication(BaseModel):
     phone_number: str = Field(min_length=10, max_length=20)
     email: EmailStr
     position: str = Field(min_length=2, max_length=160)
+    linkedin_profile_url: HttpUrl
     id_passport_acknowledged: bool = Field(default=False)
 
 
@@ -282,9 +286,42 @@ def parse_detailed_job_application_form(form_data):
         'phone_number': str(form_data.get('phone_number') or '').strip(),
         'email': str(form_data.get('email') or '').strip(),
         'position': str(form_data.get('position') or '').strip(),
+        'linkedin_profile_url': str(form_data.get('linkedin_profile_url') or '').strip(),
         'id_passport_acknowledged': str(form_data.get('id_passport_acknowledged') or '').strip().lower() in {'1', 'true', 'yes', 'on'},
     }
-    return DetailedJobApplication.model_validate(payload)
+    application = DetailedJobApplication.model_validate(payload)
+    validate_linkedin_profile_exists(str(application.linkedin_profile_url))
+    return application
+
+
+def validate_linkedin_profile_exists(profile_url):
+    parsed = urlparse(profile_url)
+    host = parsed.netloc.lower()
+    if parsed.scheme not in {'http', 'https'}:
+        raise ValueError('LinkedIn profile URL must start with http:// or https://')
+    if 'linkedin.com' not in host:
+        raise ValueError('Please provide a valid LinkedIn profile URL.')
+
+    request_headers = {
+        'User-Agent': 'Mozilla/5.0 (compatible; VistaWaveRecruitingBot/1.0)',
+        'Accept': 'text/html,application/xhtml+xml',
+    }
+    request_obj = Request(profile_url, headers=request_headers)
+
+    try:
+        with urlopen(request_obj, timeout=8) as response:
+            status_code = getattr(response, 'status', 200)
+            if status_code >= 400:
+                raise ValueError('LinkedIn profile page could not be validated.')
+    except HTTPError as exc:
+        if exc.code == 404:
+            raise ValueError('LinkedIn profile page was not found. Please check the URL.') from exc
+        if exc.code in {401, 403, 429, 999}:
+            # LinkedIn may block automated checks even for valid pages.
+            return
+        raise ValueError('LinkedIn profile URL could not be validated. Please check the URL.') from exc
+    except URLError as exc:
+        raise ValueError('Unable to reach the LinkedIn profile URL. Please try again.') from exc
 
 
 def create_app(config_name=None):
@@ -885,6 +922,11 @@ def register_api_routes(app):
         """Submit detailed job application from job seeker."""
         try:
             application = parse_detailed_job_application_form(request.form)
+        except ValueError as exc:
+            return jsonify({
+                'status': 'error',
+                'message': str(exc)
+            }), 400
         except ValidationError as exc:
             return jsonify({
                 'status': 'error',
@@ -899,6 +941,7 @@ def register_api_routes(app):
             'email': application.email,
             'phone_number': application.phone_number,
             'position': application.position,
+            'linkedin_profile_url': str(application.linkedin_profile_url),
             'status': 'new',
             'created_at': datetime.now(timezone.utc).isoformat()
         }
@@ -912,6 +955,7 @@ def register_api_routes(app):
             ('Email', application.email),
             ('Phone Number', application.phone_number),
             ('Position Applying For', application.position),
+            ('LinkedIn Profile', application.linkedin_profile_url),
         ])
 
         try:
@@ -964,6 +1008,12 @@ def register_api_routes(app):
 
         try:
             application = parse_detailed_job_application_form(request.form)
+        except ValueError as exc:
+            return render_template(
+                'job_application.html',
+                job=job,
+                error=str(exc),
+            ), 400
         except ValidationError as exc:
             return render_template(
                 'job_application.html',
@@ -996,6 +1046,7 @@ def register_api_routes(app):
             'phone_number': application.phone_number,
             'email': application.email,
             'position': application.position,
+            'linkedin_profile_url': str(application.linkedin_profile_url),
             'resume': resume_meta,
             'status': 'new',
             'created_at': datetime.now(timezone.utc).isoformat(),
@@ -1011,6 +1062,7 @@ def register_api_routes(app):
             ('Phone Number', application.phone_number),
             ('Email', application.email),
             ('Position Applying For', application.position),
+            ('LinkedIn Profile', application.linkedin_profile_url),
             ('Resume File', resume_meta['filename']),
             ('Resume Location', resume_meta['location']),
             ('ID / Passport Requirement Acknowledged', application.id_passport_acknowledged),
