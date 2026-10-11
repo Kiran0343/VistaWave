@@ -10,7 +10,7 @@ from datetime import datetime, timezone
 from collections import deque
 from logging.handlers import RotatingFileHandler
 from email.message import EmailMessage
-from flask import Flask, render_template, jsonify, request, Response, stream_with_context
+from flask import Flask, render_template, jsonify, request, Response, stream_with_context, redirect, url_for
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
@@ -92,11 +92,13 @@ def add_cors_headers(response, app):
     return response
 
 
-def build_resume_filename(applicant_name, original_filename):
+def build_resume_filename(applicant_name, original_filename, role_name=''):
     safe_name = secure_filename(applicant_name) or 'applicant'
+    safe_role = secure_filename(role_name) if role_name else ''
     extension = Path(original_filename).suffix.lower() or '.pdf'
-    timestamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')
-    return f'{timestamp}-{uuid4().hex[:10]}-{safe_name}{extension}'
+    if safe_role:
+        return f'{safe_name}-{safe_role}{extension}'
+    return f'{safe_name}{extension}'
 
 
 def validate_resume_upload(uploaded_file):
@@ -148,7 +150,7 @@ def upload_resume_to_s3(app, storage_key, file_bytes, content_type):
     return f's3://{app.config["S3_BUCKET_NAME"]}/{storage_key}'
 
 
-def store_resume(app, uploaded_file, applicant_name):
+def store_resume(app, uploaded_file, applicant_name, role_name=''):
     validate_resume_upload(uploaded_file)
 
     file_bytes = uploaded_file.read()
@@ -156,7 +158,7 @@ def store_resume(app, uploaded_file, applicant_name):
         raise ValueError('Resume exceeds the maximum allowed size')
 
     uploaded_file.stream.seek(0)
-    filename = build_resume_filename(applicant_name, uploaded_file.filename)
+    filename = build_resume_filename(applicant_name, uploaded_file.filename, role_name)
     storage_key = f'resumes/{filename}'
     content_type = uploaded_file.mimetype or 'application/pdf'
 
@@ -256,7 +258,7 @@ def send_notification_email_async(app, subject, body, reply_to=None, attachments
         except Exception as exc:
             app.logger.exception('Background recruiter email failed: %s', exc)
 
-    thread = threading.Thread(target=worker, daemon=True)
+    thread = threading.Thread(target=worker, daemon=False)
     thread.start()
     return thread
 
@@ -320,7 +322,7 @@ def create_app(config_name=None):
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com; "
             "img-src 'self' data: https://*.crisp.chat; "
-            "script-src 'self' https://client.crisp.chat; "
+            "script-src 'self' 'unsafe-inline' https://client.crisp.chat; "
             "connect-src 'self' https://*.crisp.chat wss://*.crisp.chat; "
             "frame-src 'self' https://*.crisp.chat;"
         )
@@ -421,12 +423,12 @@ def create_app(config_name=None):
             'thank_you.html',
             page_title=page_title,
             eyebrow='Application Submitted',
-            heading=f'Submitted successfully for the role: {role_name}',
-            lead='Our team will review your background and reach out if there is a fit with current or upcoming roles.',
+            heading=f'Thank you for applying for {role_name}.',
+            lead='Your resume and application details have been received successfully. Our recruiter will review your submission and contact you if there is a fit for this or a related opportunity.',
             next_steps=[
-                'Your application and resume are now in review.',
-                'Qualified candidates are typically contacted within a few business days.',
-                'If you prefer a faster conversation, you can use the calendar link below.'
+                'Your application and resume are now in our review queue.',
+                'Our recruitment team evaluates submissions for fit and upcoming openings.',
+                'If you would like to speak directly, you can book a quick intro call using the link below.'
             ],
             primary_cta_label='Book an Intro Call',
             secondary_cta_label='Explore Open Roles'
@@ -803,7 +805,7 @@ def register_api_routes(app):
 
         try:
             application = parse_job_application_form(request.form)
-            resume_meta = store_resume(app, resume_file, application.name)
+            resume_meta = store_resume(app, resume_file, application.name, application.position)
         except ValueError as exc:
             return jsonify({
                 'status': 'error',
@@ -866,11 +868,16 @@ def register_api_routes(app):
             application.position
         )
 
-        return jsonify({
-            'status': 'accepted',
-            'message': 'Application submitted successfully',
-            'application_id': application_record['id']
-        }), 202
+        # For normal browser form posts, redirect to the thank-you page only after
+        # the recruiter email has been sent successfully.
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.accept_mimetypes.best == 'application/json':
+            return jsonify({
+                'status': 'accepted',
+                'message': 'Application submitted successfully.',
+                'application_id': application_record['id']
+            }), 202
+
+        return redirect(url_for('thank_you_application', role=application.position))
 
     @app.route('/api/v1/detailed-apply', methods=['POST'])
     @limiter.limit('30 per hour')
@@ -947,31 +954,40 @@ def register_api_routes(app):
             formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', '')
         )
 
-    @app.route('/api/v1/apply-detailed', methods=['POST'])
+    @app.route('/apply/<job_id>', methods=['POST'])
     @limiter.limit('30 per hour')
-    def api_detailed_apply():
-        """Submit detailed application details including resume by email."""
+    def submit_job_application(job_id):
+        """Submit the detailed application form via normal browser POST and redirect to success page."""
+        job = next((item for item in app.extensions['job_postings'] if item['id'] == job_id), None)
+        if job is None:
+            return render_template('404.html'), 404
+
         try:
             application = parse_detailed_job_application_form(request.form)
         except ValidationError as exc:
-            return jsonify({
-                'status': 'error',
-                'message': 'Invalid application details',
-                'errors': exc.errors()
-            }), 400
+            return render_template(
+                'job_application.html',
+                job=job,
+                error='Please complete all required fields correctly.',
+                form_errors=exc.errors(),
+            ), 400
 
         resume_file = request.files.get('resume')
-
         if resume_file is None or not resume_file.filename:
-            return jsonify({
-                'status': 'error',
-                'message': 'Resume is required.'
-            }), 400
+            return render_template(
+                'job_application.html',
+                job=job,
+                error='Resume is required.',
+            ), 400
 
         try:
-            resume_meta = store_resume(app, resume_file, f"{application.first_name} {application.last_name}")
+            resume_meta = store_resume(app, resume_file, f"{application.first_name} {application.last_name}", application.position)
         except ValueError as exc:
-            return jsonify({'status': 'error', 'message': str(exc)}), 400
+            return render_template(
+                'job_application.html',
+                job=job,
+                error=str(exc),
+            ), 400
 
         app_record = {
             'id': str(uuid4()),
@@ -982,7 +998,8 @@ def register_api_routes(app):
             'position': application.position,
             'resume': resume_meta,
             'status': 'new',
-            'created_at': datetime.now(timezone.utc).isoformat()
+            'created_at': datetime.now(timezone.utc).isoformat(),
+            'id_passport_acknowledged': application.id_passport_acknowledged,
         }
 
         app.extensions['job_applications'].appendleft(app_record)
@@ -996,16 +1013,22 @@ def register_api_routes(app):
             ('Position Applying For', application.position),
             ('Resume File', resume_meta['filename']),
             ('Resume Location', resume_meta['location']),
+            ('ID / Passport Requirement Acknowledged', application.id_passport_acknowledged),
         ])
 
         resume_bytes = get_attachment_bytes(resume_file)
-
         attachments = [
-            (resume_meta['filename'], resume_bytes or (resume_meta['location'] and Path(resume_meta['location']).read_bytes() if resume_meta.get('storage_backend') == 'local' else None), resume_meta['content_type']),
+            (
+                resume_meta['filename'],
+                resume_bytes or (
+                    resume_meta['location'] and Path(resume_meta['location']).read_bytes() if resume_meta.get('storage_backend') == 'local' else None
+                ),
+                resume_meta['content_type'],
+            ),
         ]
 
         try:
-            send_notification_email_async(
+            send_notification_email(
                 app,
                 subject=f'Application for {application.position} - {application.first_name} {application.last_name}',
                 body=email_body,
@@ -1013,17 +1036,14 @@ def register_api_routes(app):
                 attachments=attachments,
             )
         except Exception as exc:
-            app.logger.exception('Failed to queue detailed recruiter email: %s', exc)
-            return jsonify({
-                'status': 'error',
-                'message': 'Application saved but the recruiter email failed to send.'
-            }), 502
+            app.logger.exception('Recruiter email failed during browser form submission: %s', exc)
+            return render_template(
+                'job_application.html',
+                job=job,
+                error='Application could not be submitted because the recruiter email failed to send.',
+            ), 500
 
-        return jsonify({
-            'status': 'accepted',
-            'message': 'Application submitted successfully.',
-            'application_id': app_record['id']
-        }), 202
+        return redirect(url_for('thank_you_application', role=application.position))
 
 
 def register_error_handlers(app):
@@ -1058,4 +1078,4 @@ def register_error_handlers(app):
 
 if __name__ == '__main__':
     app_instance = create_app()
-    app_instance.run(debug=True, use_reloader=False, host='0.0.0.0', port=5003)
+    app_instance.run(debug=True, use_reloader=False, host='0.0.0.0', port=5005)
