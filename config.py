@@ -52,7 +52,7 @@ class Config:
     SMTP_USE_TLS = _get_bool('SMTP_USE_TLS', True)
     SMTP_USE_SSL = _get_bool('SMTP_USE_SSL', False)
     SMTP_TIMEOUT_SECONDS = int(os.environ.get('SMTP_TIMEOUT_SECONDS', '20'))
-    NOTIFICATION_TO_EMAILS = _get_list('NOTIFICATION_TO_EMAILS', 'kiran@vistawave.com')
+    NOTIFICATION_TO_EMAILS = _get_list('NOTIFICATION_TO_EMAILS', 'recruiter@vistawavepro.com')
     RESUME_STORAGE_BACKEND = os.environ.get('RESUME_STORAGE_BACKEND', 'local').strip().lower()
     RESUME_UPLOAD_DIR = os.environ.get('RESUME_UPLOAD_DIR', 'storage/resumes')
     RESUME_MAX_BYTES = int(os.environ.get('RESUME_MAX_BYTES', str(5 * 1024 * 1024)))

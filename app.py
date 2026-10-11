@@ -3,6 +3,7 @@ import json
 import logging
 import smtplib
 import time
+import threading
 from pathlib import Path
 from uuid import uuid4
 from datetime import datetime, timezone
@@ -14,9 +15,13 @@ from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
-from pydantic import BaseModel, EmailStr, Field, ValidationError
+from pydantic import BaseModel, EmailStr, Field, ValidationError, HttpUrl
 from werkzeug.exceptions import HTTPException
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from config import config
 from blog_posts import BLOG_POSTS
 
@@ -47,8 +52,19 @@ class JobApplication(BaseModel):
     email: EmailStr
     phone: str = Field(min_length=10, max_length=20)
     position: str = Field(min_length=2, max_length=160)
-    linkedin_url: str = Field(min_length=5, max_length=500)
+    linkedin_url: HttpUrl
     message: str = Field(min_length=10, max_length=2000)
+
+
+class DetailedJobApplication(BaseModel):
+    """Validated detailed application for recruiter follow-up."""
+
+    first_name: str = Field(min_length=2, max_length=80)
+    last_name: str = Field(min_length=2, max_length=80)
+    phone_number: str = Field(min_length=10, max_length=20)
+    email: EmailStr
+    position: str = Field(min_length=2, max_length=160)
+    id_passport_acknowledged: bool = Field(default=False)
 
 
 def create_directory_if_missing(path_value):
@@ -85,15 +101,20 @@ def build_resume_filename(applicant_name, original_filename):
 
 def validate_resume_upload(uploaded_file):
     if uploaded_file is None or not uploaded_file.filename:
-        raise ValueError('Resume PDF is required')
+        raise ValueError('DOCX file is required')
 
     extension = Path(uploaded_file.filename).suffix.lower()
-    if extension != '.pdf':
-        raise ValueError('Resume must be a PDF file')
+    if extension != '.docx':
+        raise ValueError('Only DOCX files are allowed')
 
     content_type = (uploaded_file.mimetype or '').lower()
-    if content_type and content_type not in {'application/pdf', 'application/x-pdf'}:
-        raise ValueError('Resume must be uploaded as a PDF')
+    allowed_types = {
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/docx',
+        'application/octet-stream'
+    }
+    if content_type and content_type not in allowed_types:
+        raise ValueError('Only DOCX files are allowed')
 
 
 def upload_resume_to_s3(app, storage_key, file_bytes, content_type):
@@ -163,6 +184,16 @@ def store_resume(app, uploaded_file, applicant_name):
     }
 
 
+def get_attachment_bytes(file_storage):
+    if file_storage is None:
+        return None
+    try:
+        file_storage.stream.seek(0)
+        return file_storage.read()
+    except Exception:
+        return None
+
+
 def format_email_body(title, rows):
     lines = [title, '']
     for label, value in rows:
@@ -170,7 +201,7 @@ def format_email_body(title, rows):
     return '\n'.join(lines)
 
 
-def send_notification_email(app, subject, body, reply_to=None):
+def send_notification_email(app, subject, body, reply_to=None, attachments=None):
     recipients = app.config['NOTIFICATION_TO_EMAILS']
     if not recipients:
         raise RuntimeError('Notification recipient email is not configured')
@@ -182,6 +213,17 @@ def send_notification_email(app, subject, body, reply_to=None):
     if reply_to:
         message['Reply-To'] = reply_to
     message.set_content(body)
+
+    if attachments:
+        for filename, payload, mime_type in attachments:
+            if payload is None:
+                continue
+            message.add_attachment(
+                payload,
+                maintype=mime_type.split('/')[0] if '/' in mime_type else 'application',
+                subtype=mime_type.split('/')[-1] if '/' in mime_type else 'octet-stream',
+                filename=filename
+            )
 
     if app.config['SMTP_USE_SSL']:
         smtp_client = smtplib.SMTP_SSL(
@@ -206,6 +248,19 @@ def send_notification_email(app, subject, body, reply_to=None):
         server.send_message(message)
 
 
+def send_notification_email_async(app, subject, body, reply_to=None, attachments=None):
+    def worker():
+        try:
+            send_notification_email(app, subject, body, reply_to=reply_to, attachments=attachments)
+            app.logger.info('Background recruiter email sent successfully: %s', subject)
+        except Exception as exc:
+            app.logger.exception('Background recruiter email failed: %s', exc)
+
+    thread = threading.Thread(target=worker, daemon=True)
+    thread.start()
+    return thread
+
+
 def parse_job_application_form(form_data):
     payload = {
         'name': str(form_data.get('name') or '').strip(),
@@ -216,6 +271,19 @@ def parse_job_application_form(form_data):
         'message': str(form_data.get('message') or '').strip(),
     }
     return JobApplication.model_validate(payload)
+
+
+def parse_detailed_job_application_form(form_data):
+    payload = {
+        'first_name': str(form_data.get('first_name') or '').strip(),
+        'last_name': str(form_data.get('last_name') or '').strip(),
+        'phone_number': str(form_data.get('phone_number') or '').strip(),
+        'email': str(form_data.get('email') or '').strip(),
+        'position': str(form_data.get('position') or '').strip(),
+        'id_passport_acknowledged': str(form_data.get('id_passport_acknowledged') or '').strip().lower() in {'1', 'true', 'yes', 'on'},
+    }
+    return DetailedJobApplication.model_validate(payload)
+
 
 def create_app(config_name=None):
     """Application factory function"""
@@ -347,11 +415,13 @@ def create_app(config_name=None):
     @limiter.limit('120 per minute')
     def thank_you_application():
         """Job application thank-you page with follow-up CTA."""
+        role_name = request.args.get('role', '').strip() or 'this role'
+        page_title = f'Application Received | {role_name}' if role_name else 'Application Received | vistawave'
         return render_template(
             'thank_you.html',
-            page_title='Application Received | vistawave',
+            page_title=page_title,
             eyebrow='Application Submitted',
-            heading='Your application has been received.',
+            heading=f'Submitted successfully for the role: {role_name}',
             lead='Our team will review your background and reach out if there is a fit with current or upcoming roles.',
             next_steps=[
                 'Your application and resume are now in review.',
@@ -421,99 +491,120 @@ def generate_sample_jobs():
     jobs = [
         {
             'id': 'job_001',
-            'title': 'Senior Python Backend Engineer',
-            'company': 'Vistawave Client - FinTech',
-            'location': 'Dallas, TX (Hybrid)',
-            'type': 'Contract-to-Hire',
-            'experience_required': '5+',
-            'skills': ['Python', 'FastAPI', 'AWS', 'PostgreSQL'],
-            'salary_range': '$135k-$165k',
-            'posted_date': '2026-03-26',
-            'description': 'Build high-throughput backend services for payments workflows.'
+            'title': 'Technical Project Manager',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['Project Planning', 'Stakeholder Management', 'Agile', 'Risk Management'],
+            'posted_date': '2026-10-01',
+            'start_date': 'October 2026 (Month 1)',
+            'project_type': 'State Project',
+            'description': 'Lead project delivery, milestones, and cross-functional coordination for a state government WIC initiative.'
         },
         {
             'id': 'job_002',
-            'title': 'Senior React Frontend Engineer',
-            'company': 'Vistawave Client - HealthTech',
-            'location': 'Austin, TX (Remote)',
-            'type': 'Direct Hire',
-            'experience_required': '4+',
-            'skills': ['React', 'TypeScript', 'Next.js', 'GraphQL'],
-            'salary_range': '$125k-$150k',
-            'posted_date': '2026-03-27',
-            'description': 'Lead UI architecture for clinical workflow applications.'
+            'title': 'Full Stack Developer',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['JavaScript', 'Python', 'React', 'PostgreSQL'],
+            'posted_date': '2026-10-01',
+            'start_date': 'October 2026 (Month 1)',
+            'project_type': 'State Project',
+            'description': 'Build and maintain application features across frontend, backend, and data layers for a state program.'
         },
         {
             'id': 'job_003',
-            'title': 'Cloud DevOps Engineer',
-            'company': 'Vistawave Client - SaaS Platform',
+            'title': 'Entry-Level Software Developer',
+            'company': 'State Project - WIC Program',
             'location': 'Remote (US)',
-            'type': 'Direct Hire',
-            'experience_required': '6+',
-            'skills': ['Kubernetes', 'Terraform', 'AWS', 'CI/CD'],
-            'salary_range': '$140k-$175k',
-            'posted_date': '2026-03-24',
-            'description': 'Own platform reliability, deployment automation, and observability.'
+            'type': 'C2C',
+            'experience_required': '0-2 years',
+            'skills': ['HTML', 'CSS', 'JavaScript', 'Python'],
+            'posted_date': '2026-10-01',
+            'start_date': 'October 2026 (Month 1)',
+            'project_type': 'State Project',
+            'description': 'Support development work for new platform features and application enhancements on a state initiative.'
         },
         {
             'id': 'job_004',
-            'title': 'Senior Data Engineer',
-            'company': 'Vistawave Client - Retail Analytics',
-            'location': 'Chicago, IL (Hybrid)',
-            'type': 'Contract-to-Hire',
-            'experience_required': '4+',
-            'skills': ['Python', 'Spark', 'Snowflake', 'dbt', 'Airflow'],
-            'salary_range': '$130k-$158k',
-            'posted_date': '2026-03-25',
-            'description': 'Build enterprise data pipelines and modern analytics foundation.'
+            'title': 'QA Analyst',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['Manual Testing', 'Automation', 'SQL', 'Regression Testing'],
+            'posted_date': '2026-10-01',
+            'start_date': 'October 2026 (Month 1)',
+            'project_type': 'State Project',
+            'description': 'Validate requirements, test release quality, and support regression coverage for a state program.'
         },
         {
             'id': 'job_005',
-            'title': 'QA Automation Engineer',
-            'company': 'Vistawave Client - E-commerce',
-            'location': 'Seattle, WA (Remote)',
-            'type': 'Contract',
-            'experience_required': '3+',
-            'skills': ['Selenium', 'Python', 'Jest', 'Playwright'],
-            'salary_range': '$95k-$125k',
-            'posted_date': '2026-03-28',
-            'description': 'Expand end-to-end test automation for omnichannel checkout.'
+            'title': 'Senior QA Analyst',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['QA Strategy', 'Automation', 'Test Planning', 'Defect Tracking'],
+            'posted_date': '2026-10-01',
+            'start_date': 'October 2026 (Month 1)',
+            'project_type': 'State Project',
+            'description': 'Lead quality assurance efforts and testing standards across a state-facing application delivery team.'
         },
         {
             'id': 'job_006',
-            'title': 'Machine Learning Engineer',
-            'company': 'Vistawave Client - Logistics AI',
-            'location': 'Atlanta, GA (Hybrid)',
-            'type': 'Direct Hire',
-            'experience_required': '5+',
-            'skills': ['Python', 'PyTorch', 'MLOps', 'AWS'],
-            'salary_range': '$150k-$185k',
-            'posted_date': '2026-03-29',
-            'description': 'Deploy demand forecasting and route optimization ML models.'
+            'title': 'Full Stack Developer',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['Java', 'JavaScript', 'Azure', 'API Development'],
+            'posted_date': '2026-12-01',
+            'start_date': 'December 2026 (Month 3)',
+            'project_type': 'State Project',
+            'description': 'Support additional engineering capacity for delivery milestones and modernization work on a state project.'
         },
         {
             'id': 'job_007',
-            'title': 'Salesforce Developer',
-            'company': 'Vistawave Client - Professional Services',
+            'title': 'Solution Architect',
+            'company': 'State Project - WIC Program',
             'location': 'Remote (US)',
-            'type': 'Contract',
-            'experience_required': '4+',
-            'skills': ['Salesforce', 'Apex', 'LWC', 'Integration APIs'],
-            'salary_range': '$105k-$135k',
-            'posted_date': '2026-03-27',
-            'description': 'Implement CRM workflows and quote-to-cash automations.'
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['Cloud Architecture', 'Data Architecture', 'AWS', 'Azure'],
+            'posted_date': '2026-12-01',
+            'start_date': 'December 2026 (Month 3)',
+            'project_type': 'State Project',
+            'description': 'Design the target-state architecture and technical roadmap across cloud and data platforms for a state initiative.'
         },
         {
             'id': 'job_008',
-            'title': 'Cybersecurity Analyst',
-            'company': 'Vistawave Client - Insurance',
-            'location': 'Phoenix, AZ (Hybrid)',
-            'type': 'Contract-to-Hire',
-            'experience_required': '4+',
-            'skills': ['SIEM', 'SOC', 'Threat Modeling', 'Incident Response'],
-            'salary_range': '$115k-$145k',
-            'posted_date': '2026-03-29',
-            'description': 'Strengthen SOC operations and response playbooks.'
+            'title': 'QA Analyst',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['Test Cases', 'Automation', 'User Acceptance Testing', 'SQL'],
+            'posted_date': '2026-12-01',
+            'start_date': 'December 2026 (Month 3)',
+            'project_type': 'State Project',
+            'description': 'Support testing for release readiness, defect triage, and user acceptance validation on a state project.'
+        },
+        {
+            'id': 'job_009',
+            'title': 'PostgreSQL Developer',
+            'company': 'State Project - WIC Program',
+            'location': 'Remote (US)',
+            'type': 'C2C',
+            'experience_required': '8+ years',
+            'skills': ['PostgreSQL', 'SQL', 'Performance Tuning', 'Data Migration'],
+            'posted_date': '2027-01-01',
+            'start_date': 'January 2027 (Month 4)',
+            'project_type': 'State Project',
+            'description': 'Support database optimization, migration, and PostgreSQL platform work for a state project.'
         }
     ]
     return jobs
@@ -678,7 +769,7 @@ def register_api_routes(app):
         ])
 
         try:
-            send_notification_email(
+            send_notification_email_async(
                 app,
                 subject=f'New IT Assessment Request - {inquiry.company}',
                 body=email_body,
@@ -755,7 +846,7 @@ def register_api_routes(app):
         ])
 
         try:
-            send_notification_email(
+            send_notification_email_async(
                 app,
                 subject=f'New Job Application - {application.position} - {application.name}',
                 body=email_body,
@@ -766,7 +857,7 @@ def register_api_routes(app):
             return jsonify({
                 'status': 'error',
                 'message': 'Application saved but notification email failed'
-            }), 502
+            }, 502)
 
         app.logger.info(
             'New job application from %s (%s) for %s',
@@ -779,6 +870,159 @@ def register_api_routes(app):
             'status': 'accepted',
             'message': 'Application submitted successfully',
             'application_id': application_record['id']
+        }), 202
+
+    @app.route('/api/v1/detailed-apply', methods=['POST'])
+    @limiter.limit('30 per hour')
+    def api_detailed_job_apply():
+        """Submit detailed job application from job seeker."""
+        try:
+            application = parse_detailed_job_application_form(request.form)
+        except ValidationError as exc:
+            return jsonify({
+                'status': 'error',
+                'message': 'Invalid application',
+                'errors': exc.errors()
+            }), 400
+
+        application_record = {
+            'id': str(uuid4()),
+            'first_name': application.first_name,
+            'last_name': application.last_name,
+            'email': application.email,
+            'phone_number': application.phone_number,
+            'position': application.position,
+            'status': 'new',
+            'created_at': datetime.now(timezone.utc).isoformat()
+        }
+
+        app.extensions['job_applications'].appendleft(application_record)
+
+        email_body = format_email_body('New Detailed Job Application', [
+            ('Submitted At', application_record['created_at']),
+            ('First Name', application.first_name),
+            ('Last Name', application.last_name),
+            ('Email', application.email),
+            ('Phone Number', application.phone_number),
+            ('Position Applying For', application.position),
+        ])
+
+        try:
+            send_notification_email_async(
+                app,
+                subject=f'New Detailed Job Application - {application.position} - {application.first_name} {application.last_name}',
+                body=email_body,
+                reply_to=str(application.email)
+            )
+        except Exception as exc:
+            app.logger.exception('Failed to send detailed application email: %s', exc)
+            return jsonify({
+                'status': 'error',
+                'message': 'Application saved but notification email failed'
+            }), 502
+
+        app.logger.info(
+            'New detailed job application from %s %s (%s) for %s',
+            application.first_name,
+            application.last_name,
+            application.email,
+            application.position
+        )
+
+        return jsonify({
+            'status': 'accepted',
+            'message': 'Application submitted successfully',
+            'application_id': application_record['id']
+        }), 202
+
+    @app.route('/apply/<job_id>', methods=['GET'])
+    def apply_for_job(job_id):
+        """Display the job-specific detailed application page."""
+        job = next((item for item in app.extensions['job_postings'] if item['id'] == job_id), None)
+        if job is None:
+            return render_template('404.html'), 404
+        return render_template(
+            'job_application.html',
+            job=job,
+            formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', '')
+        )
+
+    @app.route('/api/v1/apply-detailed', methods=['POST'])
+    @limiter.limit('30 per hour')
+    def api_detailed_apply():
+        """Submit detailed application details including resume by email."""
+        try:
+            application = parse_detailed_job_application_form(request.form)
+        except ValidationError as exc:
+            return jsonify({
+                'status': 'error',
+                'message': 'Invalid application details',
+                'errors': exc.errors()
+            }), 400
+
+        resume_file = request.files.get('resume')
+
+        if resume_file is None or not resume_file.filename:
+            return jsonify({
+                'status': 'error',
+                'message': 'Resume is required.'
+            }), 400
+
+        try:
+            resume_meta = store_resume(app, resume_file, f"{application.first_name} {application.last_name}")
+        except ValueError as exc:
+            return jsonify({'status': 'error', 'message': str(exc)}), 400
+
+        app_record = {
+            'id': str(uuid4()),
+            'first_name': application.first_name,
+            'last_name': application.last_name,
+            'phone_number': application.phone_number,
+            'email': application.email,
+            'position': application.position,
+            'resume': resume_meta,
+            'status': 'new',
+            'created_at': datetime.now(timezone.utc).isoformat()
+        }
+
+        app.extensions['job_applications'].appendleft(app_record)
+
+        email_body = format_email_body('New Detailed Job Application', [
+            ('Submitted At', app_record['created_at']),
+            ('First Name', application.first_name),
+            ('Last Name', application.last_name),
+            ('Phone Number', application.phone_number),
+            ('Email', application.email),
+            ('Position Applying For', application.position),
+            ('Resume File', resume_meta['filename']),
+            ('Resume Location', resume_meta['location']),
+        ])
+
+        resume_bytes = get_attachment_bytes(resume_file)
+
+        attachments = [
+            (resume_meta['filename'], resume_bytes or (resume_meta['location'] and Path(resume_meta['location']).read_bytes() if resume_meta.get('storage_backend') == 'local' else None), resume_meta['content_type']),
+        ]
+
+        try:
+            send_notification_email_async(
+                app,
+                subject=f'Application for {application.position} - {application.first_name} {application.last_name}',
+                body=email_body,
+                reply_to=str(application.email),
+                attachments=attachments,
+            )
+        except Exception as exc:
+            app.logger.exception('Failed to queue detailed recruiter email: %s', exc)
+            return jsonify({
+                'status': 'error',
+                'message': 'Application saved but the recruiter email failed to send.'
+            }), 502
+
+        return jsonify({
+            'status': 'accepted',
+            'message': 'Application submitted successfully.',
+            'application_id': app_record['id']
         }), 202
 
 
@@ -814,4 +1058,4 @@ def register_error_handlers(app):
 
 if __name__ == '__main__':
     app_instance = create_app()
-    app_instance.run(debug=True, host='0.0.0.0', port=5001)
+    app_instance.run(debug=True, use_reloader=False, host='0.0.0.0', port=5003)

@@ -194,6 +194,9 @@ const renderTalentPool = (payload) => {
     .join('');
 };
 
+const isValidEmail = (value) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || '').trim());
+const isValidLinkedInUrl = (value) => /^https?:\/\/((www\.)?linkedin\.com\/)\S+$/i.test(String(value || '').trim());
+
 const renderJobs = (jobs) => {
   if (!jobsGrid || !Array.isArray(jobs)) return;
 
@@ -207,10 +210,11 @@ const renderJobs = (jobs) => {
         </div>
         <p class="job-company">${job.company}</p>
         <p class="job-location">${job.location}</p>
+        <p class="job-project-type">${job.project_type || 'State Project'}</p>
         <p class="job-description">${job.description}</p>
         <div class="job-meta">
           <span class="job-exp">Exp: ${job.experience_required}</span>
-          <span class="job-salary">${job.salary_range}</span>
+          <span class="job-start-date">Start: ${job.start_date || job.posted_date || 'TBD'}</span>
         </div>
         <div class="job-skills">
           ${job.skills.map((s) => `<span class="skill-tag">${s}</span>`).join('')}
@@ -224,6 +228,12 @@ const renderJobs = (jobs) => {
 
   document.querySelectorAll('.apply-job').forEach((btn) => {
     btn.addEventListener('click', (e) => {
+      const jobId = e.target.dataset.jobId;
+      if (jobId) {
+        window.location.href = `/apply/${jobId}`;
+        return;
+      }
+
       const jobTitle = e.target.dataset.jobTitle;
       if (applyPosition) applyPosition.value = jobTitle;
       document.querySelector('#apply').scrollIntoView({ behavior: 'smooth' });
@@ -368,6 +378,8 @@ if (applyForm) {
 
     const formData = new FormData(applyForm);
     const resumeFile = formData.get('resume');
+    const email = String(formData.get('email') || '').trim();
+    const linkedinUrl = String(formData.get('linkedin_url') || '').trim();
 
     if (!(resumeFile instanceof File) || !resumeFile.name) {
       if (applyStatus) {
@@ -380,6 +392,22 @@ if (applyForm) {
     if (!resumeFile.name.toLowerCase().endsWith('.pdf')) {
       if (applyStatus) {
         applyStatus.textContent = 'Resume must be uploaded as a PDF.';
+        applyStatus.classList.add('is-error');
+      }
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      if (applyStatus) {
+        applyStatus.textContent = 'Please enter a valid email address.';
+        applyStatus.classList.add('is-error');
+      }
+      return;
+    }
+
+    if (linkedinUrl && !isValidLinkedInUrl(linkedinUrl)) {
+      if (applyStatus) {
+        applyStatus.textContent = 'Please enter a valid LinkedIn profile URL.';
         applyStatus.classList.add('is-error');
       }
       return;

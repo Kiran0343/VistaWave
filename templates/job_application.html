@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apply for {{ job.title }} | vistawave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+      }
+
+      body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .brand-logo {
+        height: 42px !important;
+        width: auto !important;
+        margin: 0 !important;
+      }
+
+      .site-header {
+        flex: 0 0 auto;
+      }
+
+      main.container {
+        flex: 1 1 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+      }
+
+      .section {
+        width: 100%;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+      }
+
+      .contact-grid {
+        max-width: 560px !important;
+        gap: 0.5rem !important;
+      }
+
+      .reveal {
+        margin: 0 !important;
+      }
+
+      .contact-form {
+        padding: 1rem 1.1rem !important;
+        gap: 0.6rem !important;
+      }
+
+      .contact-form label {
+        font-size: 0.88rem;
+      }
+
+      .contact-form input,
+      .contact-form button {
+        font-size: 0.92rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header" id="top">
+      <div class="container nav-wrap">
+        <a href="/" class="brand" aria-label="vistawave home">
+          <img class="brand-logo" src="{{ url_for('static', filename='vistawave_logo.png') }}" alt="vistawave logo" />
+        </a>
+        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+          <a href="/">Home</a>
+          <a href="/jobs">Careers</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="container" style="padding-top: 1rem; padding-bottom: 2rem;">
+      <section class="section" style="padding-top: 0; padding-bottom: 0;">
+        <div class="contact-grid" style="grid-template-columns: 1fr; max-width: 620px; margin: 0 auto; gap: 0.8rem;">
+          <div class="reveal" style="margin-bottom: 0;">
+            <p class="eyebrow" style="margin-bottom: 0.35rem;">Apply for Role</p>
+            <h2 style="margin-bottom: 0.2rem;">{{ job.title }}</h2>
+            <p style="margin-bottom: 0;">{{ job.company }} · {{ job.location }} · {{ job.type }}</p>
+          </div>
+
+          <form class="contact-form reveal" id="detailed-apply-form" enctype="multipart/form-data" style="max-width: 560px; margin: 0 auto; display: grid; gap: 0.7rem;">
+            <input type="hidden" name="position" value="{{ job.title }}" />
+
+            <div style="display:grid; gap:0.7rem;">
+              <label>
+                First Name
+                <input type="text" name="first_name" placeholder="First name" required />
+              </label>
+              <label>
+                Last Name
+                <input type="text" name="last_name" placeholder="Last name" required />
+              </label>
+              <label>
+                Phone Number
+                <input type="tel" name="phone_number" placeholder="+1 (555) 000-0000" required />
+              </label>
+              <label>
+                Email ID
+                <input type="email" name="email" placeholder="you@example.com" required />
+              </label>
+              <label>
+                Upload Resume (DOCX only)
+                <input type="file" name="resume" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
+              </label>
+              <label style="display:flex; align-items:center; gap:0.75rem; font-weight:600;">
+                <input type="checkbox" name="id_passport_acknowledged" value="true" required />
+                If selected for interview, I am willing to provide my ID and passport number.
+              </label>
+            </div>
+
+            <button class="btn" type="submit" style="margin-top: 0.2rem;">Submit Application</button>
+            <p id="apply-status" class="contact-status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      const detailedApplyForm = document.getElementById('detailed-apply-form');
+      const applyStatus = document.getElementById('apply-status');
+
+      if (detailedApplyForm) {
+        detailedApplyForm.addEventListener('submit', async (event) => {
+          event.preventDefault();
+
+          const formData = new FormData(detailedApplyForm);
+          const resumeFile = formData.get('resume');
+          const email = String(formData.get('email') || '').trim();
+          const acknowledged = formData.get('id_passport_acknowledged') === 'true' || formData.get('id_passport_acknowledged') === 'on' || formData.get('id_passport_acknowledged') === '1';
+
+          if (!(resumeFile instanceof File) || !resumeFile.name) {
+            if (applyStatus) {
+              applyStatus.textContent = 'Please upload your DOCX resume file.';
+              applyStatus.classList.add('is-error');
+            }
+            return;
+          }
+
+          if (!resumeFile.name.toLowerCase().endsWith('.docx')) {
+            if (applyStatus) {
+              applyStatus.textContent = 'Resume must be uploaded as a DOCX file.';
+              applyStatus.classList.add('is-error');
+            }
+            return;
+          }
+
+          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            if (applyStatus) {
+              applyStatus.textContent = 'Please enter a valid email address.';
+              applyStatus.classList.add('is-error');
+            }
+            return;
+          }
+
+          if (!acknowledged) {
+            if (applyStatus) {
+              applyStatus.textContent = 'Please confirm that you will provide your ID and passport number if selected for interview.';
+              applyStatus.classList.add('is-error');
+            }
+            return;
+          }
+
+          if (applyStatus) {
+            applyStatus.textContent = 'Submitting application...';
+            applyStatus.classList.remove('is-error', 'is-success');
+          }
+
+          try {
+            const roleName = document.querySelector('input[name="position"]').value || 'this role';
+            const redirectUrl = `/thank-you/application?role=${encodeURIComponent(roleName)}`;
+
+            fetch('/api/v1/apply-detailed', {
+              method: 'POST',
+              body: formData,
+              keepalive: true,
+            }).finally(() => {
+              window.location.assign(redirectUrl);
+            });
+          } catch (error) {
+            if (applyStatus) {
+              applyStatus.textContent = error.message || 'Unable to submit application right now.';
+              applyStatus.classList.add('is-error');
+            }
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
