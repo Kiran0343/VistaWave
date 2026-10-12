@@ -426,6 +426,76 @@ def create_app(config_name=None):
         """Human-readable sitemap page."""
         return render_template('sitemap.html')
 
+    @app.route('/sitemap.xml')
+    @limiter.limit('120 per minute')
+    def sitemap_xml():
+        """Machine-readable XML sitemap for search engines."""
+        today = datetime.now(timezone.utc).date().isoformat()
+
+        urls = [
+            {
+                'loc': url_for('index', _external=True),
+                'changefreq': 'weekly',
+                'priority': '1.0',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('jobs', _external=True),
+                'changefreq': 'daily',
+                'priority': '0.9',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('blog', _external=True),
+                'changefreq': 'weekly',
+                'priority': '0.8',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('privacy', _external=True),
+                'changefreq': 'yearly',
+                'priority': '0.4',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('terms', _external=True),
+                'changefreq': 'yearly',
+                'priority': '0.4',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('cookie_policy', _external=True),
+                'changefreq': 'yearly',
+                'priority': '0.4',
+                'lastmod': today,
+            },
+            {
+                'loc': url_for('sitemap_page', _external=True),
+                'changefreq': 'monthly',
+                'priority': '0.3',
+                'lastmod': today,
+            },
+        ]
+
+        for post in BLOG_POSTS:
+            urls.append({
+                'loc': url_for('blog_post', slug=post['slug'], _external=True),
+                'changefreq': 'monthly',
+                'priority': '0.7',
+                'lastmod': post.get('published', today),
+            })
+
+        for job in app.extensions['job_postings']:
+            urls.append({
+                'loc': url_for('apply_for_job', job_id=job['id'], _external=True),
+                'changefreq': 'weekly',
+                'priority': '0.8',
+                'lastmod': job.get('posted_date', today),
+            })
+
+        sitemap_xml_body = render_template('sitemap.xml', urls=urls)
+        return Response(sitemap_xml_body, mimetype='application/xml')
+
     @app.route('/cookie-policy')
     @limiter.limit('120 per minute')
     def cookie_policy():
