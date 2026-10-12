@@ -85,9 +85,21 @@
         border-radius: var(--radius);
       }
 
+      @media (max-width: 1024px) {
+        .apply-shell {
+          grid-template-columns: 1fr;
+          gap: 1rem;
+        }
+      }
+
       @media (max-width: 760px) {
         .apply-section {
           padding-top: 1.2rem;
+        }
+
+        .apply-panel,
+        .contact-form {
+          padding: 1rem;
         }
 
         .acknowledge-label {
