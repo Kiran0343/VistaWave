@@ -184,16 +184,6 @@
               Upload Resume (DOCX only)
               <input type="file" name="resume" accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document" required />
             </label>
-            <label class="acknowledge-label">
-              <input
-                type="checkbox"
-                name="id_passport_acknowledged"
-                value="true"
-                {% if request.form.get('id_passport_acknowledged') %}checked{% endif %}
-                required
-              />
-              <span>If selected for interview, I am willing to provide my ID and passport number.</span>
-            </label>
 
             <button type="submit" id="apply-submit-btn" class="btn">Submit Application</button>
             <p id="apply-status" class="contact-status" aria-live="polite"></p>
