@@ -405,6 +405,7 @@ def create_app(config_name=None):
         return render_template(
             'jobs.html',
             formspree_apply_endpoint=app.config.get('FORMSPREE_APPLY_ENDPOINT', ''),
+            jobs=app.extensions['job_postings'],
         )
 
     @app.route('/privacy')
