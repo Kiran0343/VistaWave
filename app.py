@@ -13,7 +13,7 @@ from email.message import EmailMessage
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
-from flask import Flask, render_template, jsonify, request, Response, stream_with_context, redirect, url_for
+from flask import Flask, render_template, jsonify, request, Response, stream_with_context, redirect, url_for, g
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
@@ -347,8 +347,17 @@ def create_app(config_name=None):
     register_error_handlers(app)
     
     # Security headers middleware
+    @app.before_request
+    def start_request_timer():
+        g.request_started_at = time.perf_counter()
+
     @app.after_request
     def set_security_headers(response):
+        elapsed_ms = None
+        started_at = getattr(g, 'request_started_at', None)
+        if started_at is not None:
+            elapsed_ms = (time.perf_counter() - started_at) * 1000
+
         response.headers['X-Content-Type-Options'] = 'nosniff'
         response.headers['X-Frame-Options'] = 'SAMEORIGIN'
         response.headers['X-XSS-Protection'] = '1; mode=block'
@@ -363,6 +372,23 @@ def create_app(config_name=None):
             "connect-src 'self' https://*.crisp.chat wss://*.crisp.chat; "
             "frame-src 'self' https://*.crisp.chat;"
         )
+
+        # Keep static assets cached briefly on clients/CDN for faster repeat loads.
+        if request.path.startswith('/static/'):
+            response.headers['Cache-Control'] = 'public, max-age=21600, stale-while-revalidate=300'
+
+        if elapsed_ms is not None:
+            response.headers['X-Response-Time-Ms'] = f'{elapsed_ms:.2f}'
+            slow_ms_threshold = int(app.config.get('SLOW_REQUEST_LOG_THRESHOLD_MS', 600))
+            if elapsed_ms >= slow_ms_threshold:
+                app.logger.warning(
+                    'Slow request detected: path=%s method=%s status=%s elapsed_ms=%.2f',
+                    request.path,
+                    request.method,
+                    response.status_code,
+                    elapsed_ms,
+                )
+
         return add_cors_headers(response, app)
 
     @app.before_request
@@ -425,6 +451,18 @@ def create_app(config_name=None):
     def sitemap_page():
         """Human-readable sitemap page."""
         return render_template('sitemap.html')
+
+    @app.route('/robots.txt')
+    @limiter.limit('240 per minute')
+    def robots_txt():
+        """Robots directives including sitemap location for crawlers."""
+        robots_body = '\n'.join([
+            'User-agent: *',
+            'Allow: /',
+            f'Sitemap: {url_for("sitemap_xml", _external=True)}',
+            ''
+        ])
+        return Response(robots_body, mimetype='text/plain')
 
     @app.route('/sitemap.xml')
     @limiter.limit('120 per minute')
@@ -559,6 +597,28 @@ def create_app(config_name=None):
             'status': 'healthy',
             'environment': config_name,
             'timestamp': datetime.now(timezone.utc).isoformat()
+        }, 200
+
+    @app.route('/warmup')
+    @limiter.limit('240 per minute')
+    def warmup():
+        """Render warmup endpoint to keep app workers hot and dependencies loaded."""
+        started = time.perf_counter()
+
+        # Prime core in-memory computations commonly used by public routes.
+        metrics_payload = build_live_metrics(app)
+        talent_payload = build_talent_pool_snapshot()
+        jobs_total = len(app.extensions['job_postings'])
+
+        elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
+        return {
+            'status': 'ok',
+            'warmed': True,
+            'jobs_total': jobs_total,
+            'metrics_generated_at': metrics_payload.get('generated_at'),
+            'talent_categories': len(talent_payload.get('categories', [])),
+            'elapsed_ms': elapsed_ms,
+            'timestamp': datetime.now(timezone.utc).isoformat(),
         }, 200
 
     register_api_routes(app)

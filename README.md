@@ -144,6 +144,41 @@ CRISP_WEBSITE_ID=your_crisp_website_id
 
 ### Deployment Platforms
 
+#### Render (Recommended Settings)
+
+For smoother first-load UX on Render, use the following setup:
+
+1. Keep the service warm
+
+- This app exposes `GET /warmup` for low-cost keepalive pings.
+- Configure a Render Cron Job (or external monitor) to hit:
+
+```bash
+https://your-service.onrender.com/warmup
+```
+
+- Recommended frequency: every 5-10 minutes.
+
+2. Tune Gunicorn with env vars
+
+- `gunicorn_config.py` is env-driven and uses Render-friendly defaults (`gthread`, bounded workers, stdout logs).
+- Optional Render environment variables:
+
+```bash
+WEB_CONCURRENCY=2
+GUNICORN_THREADS=4
+GUNICORN_TIMEOUT=90
+GUNICORN_KEEPALIVE=10
+GUNICORN_MAX_REQUESTS=1200
+GUNICORN_MAX_REQUESTS_JITTER=120
+SLOW_REQUEST_LOG_THRESHOLD_MS=600
+```
+
+3. Static caching
+
+- Static assets are served with cache headers for faster repeat visits.
+- Ensure your CDN/proxy layer preserves `Cache-Control` and `ETag` headers.
+
 #### Heroku
 ```bash
 heroku create your-app-name
@@ -240,6 +275,13 @@ The application exposes a `/health` endpoint for monitoring:
 ```bash
 curl http://localhost:5000/health
 # Response: {"status":"healthy"}
+```
+
+Warmup endpoint:
+
+```bash
+curl http://localhost:5000/warmup
+# Response: {"status":"ok","warmed":true,...}
 ```
 
 ## Advanced API Endpoints

@@ -310,6 +310,14 @@ const connectLiveMetrics = () => {
   });
 };
 
+const hasMetricsWidgets = Boolean(
+  metricEls.fillRate ||
+  metricEls.submissionDays ||
+  metricEls.qualifiedCandidates ||
+  metricEls.activeReqs ||
+  recommendationList
+);
+
 if (contactForm) {
   contactForm.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -448,11 +456,26 @@ if (applyForm) {
   });
 }
 
-loadStatus();
-loadMetrics();
-loadTalentPool();
-loadJobs();
-connectLiveMetrics();
-window.setInterval(loadStatus, 30000);
-window.setInterval(loadTalentPool, 40000);
-window.setInterval(loadJobs, 45000);
+if (apiStatusText) {
+  loadStatus();
+  window.setInterval(loadStatus, 30000);
+}
+
+if (hasMetricsWidgets) {
+  loadMetrics();
+  connectLiveMetrics();
+}
+
+if (talentPoolGrid) {
+  loadTalentPool();
+  window.setInterval(loadTalentPool, 40000);
+}
+
+if (jobsGrid) {
+  // The jobs page now server-renders cards to improve first paint.
+  // Only fetch if grid is empty or during background refresh.
+  if (jobsGrid.children.length === 0) {
+    loadJobs();
+  }
+  window.setInterval(loadJobs, 45000);
+}

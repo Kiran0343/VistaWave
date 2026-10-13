@@ -62,6 +62,7 @@ class Config:
     S3_REGION = os.environ.get('S3_REGION', '')
     S3_PUBLIC_BASE_URL = os.environ.get('S3_PUBLIC_BASE_URL', '')
     S3_SERVER_SIDE_ENCRYPTION = os.environ.get('S3_SERVER_SIDE_ENCRYPTION', '')
+    SLOW_REQUEST_LOG_THRESHOLD_MS = int(os.environ.get('SLOW_REQUEST_LOG_THRESHOLD_MS', '600'))
 
 
 class DevelopmentConfig(Config):
