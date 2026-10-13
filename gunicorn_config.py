@@ -4,8 +4,14 @@ import os
 bind = "0.0.0.0:5000"
 
 # Render-friendly defaults with env overrides.
-cpu_count = int(os.getenv("RENDER_CPU_COUNT", os.cpu_count() or 1))
-default_workers = max(2, min(4, cpu_count * 2))
+try:
+	cpu_count = float(os.getenv("RENDER_CPU_COUNT", str(os.cpu_count() or 1)))
+except (TypeError, ValueError):
+	cpu_count = float(os.cpu_count() or 1)
+
+# Support fractional CPU plans (e.g. Render may provide "0.50").
+cpu_slots = max(1, int(round(cpu_count)))
+default_workers = max(2, min(4, cpu_slots * 2))
 workers = int(os.getenv("WEB_CONCURRENCY", str(default_workers)))
 worker_class = os.getenv("GUNICORN_WORKER_CLASS", "gthread")
 threads = int(os.getenv("GUNICORN_THREADS", "4"))
