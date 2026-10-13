@@ -289,25 +289,10 @@ const loadJobs = async () => {
 };
 
 const connectLiveMetrics = () => {
-  if (!window.EventSource) {
-    window.setInterval(loadMetrics, 12000);
-    return;
-  }
-
-  const eventSource = new EventSource(getApiUrl('/api/v1/events'));
-  eventSource.addEventListener('metrics', (event) => {
-    try {
-      const payload = JSON.parse(event.data);
-      renderMetrics(payload);
-    } catch (error) {
-      // Ignore malformed event payloads.
-    }
-  });
-
-  eventSource.addEventListener('error', () => {
-    eventSource.close();
-    window.setTimeout(connectLiveMetrics, 3000);
-  });
+  // Use lightweight polling instead of long-lived SSE so each visitor
+  // does not hold a server worker open for an extended period.
+  loadMetrics();
+  window.setInterval(loadMetrics, 30000);
 };
 
 const hasMetricsWidgets = Boolean(
@@ -458,7 +443,6 @@ if (applyForm) {
 
 if (apiStatusText) {
   loadStatus();
-  window.setInterval(loadStatus, 30000);
 }
 
 if (hasMetricsWidgets) {
@@ -468,7 +452,6 @@ if (hasMetricsWidgets) {
 
 if (talentPoolGrid) {
   loadTalentPool();
-  window.setInterval(loadTalentPool, 40000);
 }
 
 if (jobsGrid) {
@@ -477,5 +460,4 @@ if (jobsGrid) {
   if (jobsGrid.children.length === 0) {
     loadJobs();
   }
-  window.setInterval(loadJobs, 45000);
 }

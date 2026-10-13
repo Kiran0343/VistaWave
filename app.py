@@ -377,6 +377,17 @@ def create_app(config_name=None):
         if request.path.startswith('/static/'):
             response.headers['Cache-Control'] = 'public, max-age=21600, stale-while-revalidate=300'
 
+        # Cache public HTML pages briefly for faster repeat navigations.
+        if (
+            request.method == 'GET'
+            and response.status_code == 200
+            and response.mimetype == 'text/html'
+            and request.path in {
+                '/', '/jobs', '/blog', '/privacy', '/terms', '/cookie-policy', '/sitemap'
+            }
+        ):
+            response.headers['Cache-Control'] = 'public, max-age=120, stale-while-revalidate=60'
+
         if elapsed_ms is not None:
             response.headers['X-Response-Time-Ms'] = f'{elapsed_ms:.2f}'
             slow_ms_threshold = int(app.config.get('SLOW_REQUEST_LOG_THRESHOLD_MS', 600))
@@ -409,6 +420,7 @@ def create_app(config_name=None):
     
     # Routes
     @app.route('/')
+    @cache.cached(timeout=120)
     def index():
         """Home page"""
         return render_template(
@@ -420,12 +432,14 @@ def create_app(config_name=None):
 
     @app.route('/blog')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=120)
     def blog():
         """Blog listing page"""
         return render_template('blog.html', posts=BLOG_POSTS)
 
     @app.route('/jobs')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=90)
     def jobs():
         """Jobs board page"""
         return render_template(
@@ -436,18 +450,21 @@ def create_app(config_name=None):
 
     @app.route('/privacy')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=600)
     def privacy():
         """Privacy policy page."""
         return render_template('privacy.html')
 
     @app.route('/terms')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=600)
     def terms():
         """Terms of use page."""
         return render_template('terms.html')
 
     @app.route('/sitemap')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=300)
     def sitemap_page():
         """Human-readable sitemap page."""
         return render_template('sitemap.html')
@@ -536,6 +553,7 @@ def create_app(config_name=None):
 
     @app.route('/cookie-policy')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=600)
     def cookie_policy():
         """Cookie policy page."""
         return render_template('cookie_policy.html')
@@ -582,6 +600,7 @@ def create_app(config_name=None):
 
     @app.route('/blog/<slug>')
     @limiter.limit('120 per minute')
+    @cache.cached(timeout=300)
     def blog_post(slug):
         """Individual blog post page"""
         post = next((p for p in BLOG_POSTS if p['slug'] == slug), None)
