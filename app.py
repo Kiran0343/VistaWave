@@ -11,9 +11,7 @@ from collections import deque
 from logging.handlers import RotatingFileHandler
 from email.message import EmailMessage
 from urllib.parse import urlparse
-from urllib.request import Request, urlopen
-from urllib.error import HTTPError, URLError
-from flask import Flask, render_template, jsonify, request, Response, stream_with_context, redirect, url_for, g
+from flask import Flask, render_template, jsonify, request, Response, redirect, url_for, g
 from flask_caching import Cache
 from flask_compress import Compress
 from flask_limiter import Limiter
@@ -262,7 +260,7 @@ def send_notification_email_async(app, subject, body, reply_to=None, attachments
         except Exception as exc:
             app.logger.exception('Background recruiter email failed: %s', exc)
 
-    thread = threading.Thread(target=worker, daemon=False)
+    thread = threading.Thread(target=worker, daemon=True)
     thread.start()
     return thread
 
@@ -290,38 +288,17 @@ def parse_detailed_job_application_form(form_data):
         'id_passport_acknowledged': str(form_data.get('id_passport_acknowledged') or '').strip().lower() in {'1', 'true', 'yes', 'on'},
     }
     application = DetailedJobApplication.model_validate(payload)
-    validate_linkedin_profile_exists(str(application.linkedin_profile_url))
+    validate_linkedin_profile_format(str(application.linkedin_profile_url))
     return application
 
 
-def validate_linkedin_profile_exists(profile_url):
+def validate_linkedin_profile_format(profile_url):
     parsed = urlparse(profile_url)
     host = parsed.netloc.lower()
     if parsed.scheme not in {'http', 'https'}:
         raise ValueError('LinkedIn profile URL must start with http:// or https://')
     if 'linkedin.com' not in host:
         raise ValueError('Please provide a valid LinkedIn profile URL.')
-
-    request_headers = {
-        'User-Agent': 'Mozilla/5.0 (compatible; VistaWaveRecruitingBot/1.0)',
-        'Accept': 'text/html,application/xhtml+xml',
-    }
-    request_obj = Request(profile_url, headers=request_headers)
-
-    try:
-        with urlopen(request_obj, timeout=8) as response:
-            status_code = getattr(response, 'status', 200)
-            if status_code >= 400:
-                raise ValueError('LinkedIn profile page could not be validated.')
-    except HTTPError as exc:
-        if exc.code == 404:
-            raise ValueError('LinkedIn profile page was not found. Please check the URL.') from exc
-        if exc.code in {401, 403, 429, 999}:
-            # LinkedIn may block automated checks even for valid pages.
-            return
-        raise ValueError('LinkedIn profile URL could not be validated. Please check the URL.') from exc
-    except URLError as exc:
-        raise ValueError('Unable to reach the LinkedIn profile URL. Please try again.') from exc
 
 
 def create_app(config_name=None):
@@ -900,18 +877,13 @@ def register_api_routes(app):
     @app.get('/api/v1/events')
     @limiter.limit('20 per minute')
     def api_events():
-        def event_stream():
-            for _ in range(20):
-                payload = json.dumps(build_live_metrics(app))
-                yield f'event: metrics\ndata: {payload}\n\n'
-                time.sleep(3)
-
+        payload = json.dumps(build_live_metrics(app))
         headers = {
             'Content-Type': 'text/event-stream',
             'Cache-Control': 'no-cache',
             'X-Accel-Buffering': 'no'
         }
-        return Response(stream_with_context(event_stream()), headers=headers)
+        return Response(f'event: metrics\ndata: {payload}\n\n', headers=headers)
 
     @app.post('/api/v1/staffing-request')
     @limiter.limit('15 per hour')
@@ -1229,21 +1201,13 @@ def register_api_routes(app):
             ),
         ]
 
-        try:
-            send_notification_email(
-                app,
-                subject=f'Application for {application.position} - {application.first_name} {application.last_name}',
-                body=email_body,
-                reply_to=str(application.email),
-                attachments=attachments,
-            )
-        except Exception as exc:
-            app.logger.exception('Recruiter email failed during browser form submission: %s', exc)
-            return render_template(
-                'job_application.html',
-                job=job,
-                error='Application could not be submitted because the recruiter email failed to send.',
-            ), 500
+        send_notification_email_async(
+            app,
+            subject=f'Application for {application.position} - {application.first_name} {application.last_name}',
+            body=email_body,
+            reply_to=str(application.email),
+            attachments=attachments,
+        )
 
         return redirect(url_for('thank_you_application', role=application.position))
 
