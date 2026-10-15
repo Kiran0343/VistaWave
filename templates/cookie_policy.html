@@ -8,7 +8,7 @@
       name="description"
       content="Understand how cookies and similar technologies are used on the vistawave website."
     />
-    <link rel="canonical" href="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.base_url | replace('http://', 'https://') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +21,7 @@
   <body>
     <header class="site-header" id="top">
       <div class="container nav-wrap">
-        <a href="/" class="brand" aria-label="vistawave home">
+        <a href="#top" class="brand" aria-label="vistawave home">
           <img
             class="brand-logo"
             src="{{ url_for('static', filename='vistawave_logo.png') }}"
@@ -53,7 +53,7 @@
           <p class="eyebrow">Legal</p>
           <h1>Cookie Policy</h1>
           <p class="lead">
-            This page explains how Vistawave uses cookies and related technologies to improve website performance, measure engagement, and support core functionality.
+            This page explains how vistawave uses cookies and related technologies to improve website performance, measure engagement, and support core functionality.
           </p>
         </div>
       </section>
@@ -69,7 +69,7 @@
 
           <h2>How We Use Cookies</h2>
           <p>
-            Vistawave may use cookies or similar technologies to support site performance, improve user experience, maintain security, and understand which content or conversion paths are most useful.
+            vistawave may use cookies or similar technologies to support site performance, improve user experience, maintain security, and understand which content or conversion paths are most useful.
           </p>
 
           <h2>Types of Cookies</h2>
@@ -89,7 +89,7 @@
 
           <h2>Contact</h2>
           <p>
-            Questions about this cookie policy can be sent to <a href="mailto:recruiter@vistawavepro.com">recruiter@vistawavepro.com</a>.
+            Questions about this cookie policy can be sent to <a href="mailto:hello@vistawavepro.com">hello@vistawavepro.com</a>.
           </p>
         </div>
       </section>

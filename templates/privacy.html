@@ -8,7 +8,7 @@
       name="description"
       content="Learn how vistawave collects, uses, and protects information submitted through the website and inquiry forms."
     />
-    <link rel="canonical" href="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.base_url | replace('http://', 'https://') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +21,7 @@
   <body>
     <header class="site-header" id="top">
       <div class="container nav-wrap">
-        <a href="/" class="brand" aria-label="vistawave home">
+        <a href="#top" class="brand" aria-label="vistawave home">
           <img
             class="brand-logo"
             src="{{ url_for('static', filename='vistawave_logo.png') }}"
@@ -100,7 +100,7 @@
 
           <h2>Contact</h2>
           <p>
-            Questions about this policy can be sent to recruiter@vistawavepro.com.
+            Questions about this policy can be sent to <a href="mailto:hello@vistawavepro.com">hello@vistawavepro.com</a>.
           </p>
         </div>
       </section>

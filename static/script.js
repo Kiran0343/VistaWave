@@ -1,6 +1,18 @@
 const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.primary-nav');
 const mobileNavBreakpoint = window.matchMedia('(max-width: 760px)');
+const brandLinks = document.querySelectorAll('.brand[href="#top"]');
+
+brandLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    // Force reliable top navigation even when the target is a sticky element.
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (window.location.hash) {
+      history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  });
+});
 
 if (navToggle && nav) {
   const setNavState = (isOpen) => {
@@ -202,8 +214,10 @@ const renderJobs = (jobs) => {
 
   jobsGrid.innerHTML = jobs
     .map(
-      (job) => `
-      <article class="job-card reveal visible">
+      (job) => {
+        const skills = Array.isArray(job.skills) ? job.skills : [];
+        return `
+      <article class="job-card reveal visible" data-skills="${skills.join(',')}">
         <div class="job-header">
           <h3>${job.title}</h3>
           <span class="job-type">${job.type}</span>
@@ -217,12 +231,13 @@ const renderJobs = (jobs) => {
           <span class="job-start-date">Start: ${job.start_date || job.posted_date || 'TBD'}</span>
         </div>
         <div class="job-skills">
-          ${job.skills.map((s) => `<span class="skill-tag">${s}</span>`).join('')}
+          ${skills.map((s) => `<span class="skill-tag">${s}</span>`).join('')}
         </div>
         <button class="btn btn-small apply-job" data-job-id="${job.id}" data-job-title="${job.title}">
           Apply Now
         </button>
-      </article>`
+      </article>`;
+      }
     )
     .join('');
 

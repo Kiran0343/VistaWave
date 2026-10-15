@@ -6,8 +6,9 @@
     <title>{{ post.title }} | vistawave</title>
     <meta name="description" content="{{ post.meta_description }}" />
     <meta name="robots" content="index, follow" />
-    <link rel="canonical" href="{{ request.url }}" />
-    <meta property="og:url" content="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.base_url | replace('http://', 'https://') }}" />
+    <meta property="og:url" content="{{ request.base_url | replace('http://', 'https://') }}" />
+    <meta property="og:image" content="{{ url_for('static', filename='vistawave_logo.png', _external=True, _scheme='https') }}" />
     <meta property="article:published_time" content="{{ post.published }}" />
     <meta property="article:author" content="{{ post.author }}" />
     <meta property="article:section" content="{{ post.category }}" />
@@ -40,7 +41,7 @@
   <body>
     <header class="site-header" id="top">
       <div class="container nav-wrap">
-        <a href="/" class="brand" aria-label="vistawave home">
+        <a href="#top" class="brand" aria-label="vistawave home">
           <img
             class="brand-logo"
             src="{{ url_for('static', filename='vistawave_logo.png') }}"

@@ -8,7 +8,7 @@
       name="description"
       content="Browse the primary pages, legal resources, and conversion paths available on the vistawave IT Consulting website."
     />
-    <link rel="canonical" href="{{ request.url }}" />
+    <link rel="canonical" href="{{ request.base_url | replace('http://', 'https://') }}" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -21,7 +21,7 @@
   <body>
     <header class="site-header" id="top">
       <div class="container nav-wrap">
-        <a href="/" class="brand" aria-label="vistawave home">
+        <a href="#top" class="brand" aria-label="vistawave home">
           <img
             class="brand-logo"
             src="{{ url_for('static', filename='vistawave_logo.png') }}"
@@ -53,7 +53,7 @@
           <p class="eyebrow">Navigation</p>
           <h1>Sitemap</h1>
           <p class="lead">
-            Browse key sections of the Vistawave IT Consulting website, including service entry points, legal pages, careers, and contact paths.
+            Browse key sections of the vistawave website, including service entry points, legal pages, careers, and contact paths.
           </p>
         </div>
       </section>
@@ -66,7 +66,7 @@
             <li><a href="/#about">About Us</a></li>
             <li><a href="/#services">Services</a></li>
             <li><a href="/#industries">Industries</a></li>
-            <li><a href="/#contact">Book Free Assessment</a></li>
+            <li><a href="/#contact">Book a Discovery Call</a></li>
           </ul>
 
           <h2>Insights &amp; Careers</h2>
@@ -85,7 +85,7 @@
           <h2>Contact</h2>
           <p>
             For consulting inquiries, hiring requests, or candidate conversations, contact
-            <a href="mailto:recruiter@vistawavepro.com">recruiter@vistawavepro.com</a> or call
+            <a href="mailto:hello@vistawavepro.com">hello@vistawavepro.com</a> or call
             <a href="tel:+19409230343">(940) 923-0343</a>.
           </p>
         </div>
