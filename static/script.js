@@ -1,18 +1,6 @@
 const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.primary-nav');
 const mobileNavBreakpoint = window.matchMedia('(max-width: 760px)');
-const brandLinks = document.querySelectorAll('.brand[href="#top"]');
-
-brandLinks.forEach((link) => {
-  link.addEventListener('click', (event) => {
-    // Force reliable top navigation even when the target is a sticky element.
-    event.preventDefault();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    if (window.location.hash) {
-      history.replaceState(null, '', window.location.pathname + window.location.search);
-    }
-  });
-});
 
 if (navToggle && nav) {
   const setNavState = (isOpen) => {
