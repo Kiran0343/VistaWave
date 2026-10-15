@@ -2,6 +2,228 @@
 
 BLOG_POSTS = [
     {
+        'slug': 'wic-state-project-hiring-roadmap',
+        'title': 'Hiring for the WIC State Project: A Practical Staffing Roadmap',
+        'meta_description': (
+            'A staffing roadmap for the WIC state project, covering the technical roles, hiring timeline, '
+            'and delivery approach needed to support a multi-phase modernization effort.'
+        ),
+        'published': '2026-10-14',
+        'published_display': 'October 14, 2026',
+        'author': 'vistawave Editorial',
+        'category': 'Public Sector Hiring',
+        'reading_time': '8 min read',
+        'excerpt': (
+            'A state project succeeds when the team is built in phases, the right specialists are hired early, '
+            'and delivery is aligned to migration milestones instead of a one-size-fits-all staffing model.'
+        ),
+        'sections': [
+            {
+                'type': 'p',
+                'content': (
+                    'Public sector technology programs are rarely simple software projects. They are service delivery '
+                    'initiatives with compliance requirements, procurement constraints, stakeholder coordination, '
+                    'and long implementation timelines. The WIC project scope shown here reflects that reality: '
+                    'a phased hiring plan that starts with leadership and core delivery capacity, then expands into '
+                    'specialized engineering, architecture, quality assurance, and cloud support as the program matures.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'What makes this staffing model effective is the sequence. Rather than hiring every role at once, '
+                    'the plan adds capability when the project actually needs it. That approach reduces onboarding '
+                    'risk, keeps the team focused, and helps the program stay aligned with state governance and '
+                    'delivery checkpoints.'
+                ),
+            },
+            {
+                'type': 'h2',
+                'content': 'Why a State Project Needs a Phased Hiring Plan',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'A state project often moves through discovery, design, migration, validation, and stabilization. '
+                    'Each phase requires different skills. Hiring too early can leave specialists underutilized. '
+                    'Hiring too late creates delivery bottlenecks. A phased plan balances both concerns by matching '
+                    'staffing to the work expected in each month of the program.'
+                ),
+            },
+            {
+                'type': 'ul',
+                'items': [
+                    'Front-load leadership and coordination so decisions, governance, and issue management are in place from the start.',
+                    'Bring in application developers early to begin building and modernizing the core platform.',
+                    'Add entry-level talent to support delivery capacity, documentation, and quality tasks while building a future workforce pipeline.',
+                    'Introduce architecture, QA, database, and cloud expertise when the program reaches design and migration milestones.',
+                ],
+            },
+            {
+                'type': 'h2',
+                'content': 'Month 1: Establish the Core Delivery Team',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'The first phase begins in October 2026 with the roles that create program stability. A technical '
+                    'project manager should lead schedule control, stakeholder communication, risk tracking, and '
+                    'cross-functional coordination. This role is critical in public sector environments where approvals '
+                    'and dependencies can affect every milestone.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'The same month also calls for experienced full-stack developers who can translate business '
+                    'requirements into working software quickly. In a state project, these developers need more than '
+                    'coding skill. They should understand secure development practices, accessibility expectations, '
+                    'integration patterns, and the documentation discipline that public sector work demands.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'A mixed entry-level cohort: college graduates supporting development and QA '
+                    'work. That is a smart staffing decision for a long-running public project. Early-career hires can '
+                    'be productive on test execution, defect triage, documentation, and feature support while gaining '
+                    'experience inside a structured delivery environment.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'A senior business QA analyst rounds out the initial team. In a state system, this role is often '
+                    'the bridge between policy, business rules, and technology. The analyst helps make sure that the '
+                    'solution reflects real program requirements and that test scenarios cover edge cases, compliance '
+                    'rules, and operational exceptions.'
+                ),
+            },
+            {
+                'type': 'h2',
+                'content': 'Month 3: Expand Delivery Capacity and Architecture',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'By December 2026, the project should be moving from planning into deeper implementation. That is '
+                    'the right time to add more experienced full-stack developers so the team can increase throughput '
+                    'without sacrificing quality. These hires help stabilize feature work, technical debt reduction, '
+                    'and integration development across the program.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'This phase also introduces a solution architect with cloud and data experience. For a state project, '
+                    'that role is important because architecture choices have long-term consequences for scalability, '
+                    'security, reporting, data migration, and supportability. The architect should be able to work '
+                    'closely with leadership, developers, and infrastructure stakeholders to keep the solution coherent.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'A QA analyst should join at the same time to strengthen test planning and execution. As scope grows, '
+                    'testing has to become more formal: regression cycles, business rule validation, integration testing, '
+                    'and defect management all become more visible. Bringing QA into the team early helps avoid a late '
+                    'surprise during user acceptance testing.'
+                ),
+            },
+            {
+                'type': 'h2',
+                'content': 'Month 4: Add Database Expertise for the Migration Path',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'The January 2027 role for a PostgreSQL developer signals that the project is entering a database '
+                    'modernization or migration stage. That is common in state programs where legacy systems must be '
+                    'retired or integrated with newer platforms. A dedicated database specialist can manage schema '
+                    'translation, query optimization, data quality checks, and cutover support.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'For public sector systems, database work is rarely just technical plumbing. Data structures often '
+                    'carry reporting obligations, compliance history, and operational records that need to remain intact '
+                    'through the migration. Hiring this role at the right moment helps protect data integrity while '
+                    'keeping the migration on schedule.'
+                ),
+            },
+            {
+                'type': 'h2',
+                'content': 'Month 7 and Beyond: Strengthen the Cloud Operating Model',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'The final role in the plan is a cloud specialist beginning in April 2027 or later. That timing makes '
+                    'sense if the project is moving toward infrastructure modernization, hosting changes, or a long-term '
+                    'cloud support model. A cloud specialist can help with environment management, deployment pipelines, '
+                    'security controls, monitoring, and operational readiness.'
+                ),
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'A second cloud engineer may be needed depending on migration assessment results. '
+                    'That is the right mindset for a state project: scale the team based on evidence, not assumptions. '
+                    'If assessments uncover more complexity, the staffing plan should expand to match the real workload.'
+                ),
+            },
+            {
+                'type': 'h2',
+                'content': 'What This Hiring Plan Tells You About the Program',
+            },
+            {
+                'type': 'ol',
+                'items': [
+                    'The project is large enough to need a full delivery team, not just a handful of contractors.',
+                    'The work likely spans application development, QA, architecture, data migration, and cloud operations.',
+                    'Early leadership is essential because state projects depend on structured decision-making and governance.',
+                    'The team mix intentionally includes both experienced staff and early-career hires to balance delivery and workforce development.',
+                    'Hiring is staged around milestones, which is a strong sign of a program that expects multiple phases of implementation.',
+                ],
+            },
+            {
+                'type': 'h2',
+                'content': 'Recommended Hiring Rules for a State Project',
+            },
+            {
+                'type': 'ul',
+                'items': [
+                    'Hire the program lead first so project controls are established before technical work accelerates.',
+                    'Require experience with public sector delivery, regulated data, or similarly complex enterprise environments where possible.',
+                    'Use entry-level hires to build capacity, but pair them with senior mentors and defined responsibilities.',
+                    'Time specialist hiring to the phase of work they will actually support, rather than hiring all subject matter experts on day one.',
+                    'Keep contingency capacity in mind for migration assessments, because public sector modernization often expands after discovery.',
+                ],
+            },
+            {
+                'type': 'h2',
+                'content': 'Bottom Line',
+            },
+            {
+                'type': 'p',
+                'content': (
+                    'This WIC project scope is best understood as a practical staffing roadmap for a state modernization '
+                    'effort. It starts with leadership, adds development and QA capacity, introduces architecture and '
+                    'database expertise when the program matures, and finishes with cloud operations support. That '
+                    'sequence is deliberate, and it is exactly the kind of hiring model that helps public sector '
+                    'projects stay organized, adaptable, and delivery-focused.'
+                ),
+            },
+            {
+                'type': 'cta',
+                'content': 'Need a staffing plan for a state technology project?',
+                'link': '/#contact',
+                'label': 'Talk to vistawave',
+            },
+        ],
+    },
+    {
         'slug': 'cloud-migration-strategy-guide-2026',
         'title': "Cloud Migration in 2026: A Strategic Guide for Enterprise IT Leaders",
         'meta_description': (
