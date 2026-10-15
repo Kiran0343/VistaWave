@@ -1,6 +1,21 @@
 const navToggle = document.querySelector('.nav-toggle');
 const nav = document.querySelector('.primary-nav');
 const mobileNavBreakpoint = window.matchMedia('(max-width: 760px)');
+const brandLinks = document.querySelectorAll('.brand');
+
+brandLinks.forEach((link) => {
+  link.addEventListener('click', (event) => {
+    const targetUrl = new URL(link.getAttribute('href') || '/', window.location.origin);
+    const pointsToHomeTop = targetUrl.pathname === '/' && (targetUrl.hash === '' || targetUrl.hash === '#top');
+    const isHomePage = window.location.pathname === '/';
+
+    // On home page, always scroll to top instead of relying on hash target behavior.
+    if (isHomePage && pointsToHomeTop) {
+      event.preventDefault();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  });
+});
 
 if (navToggle && nav) {
   const setNavState = (isOpen) => {
