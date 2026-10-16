@@ -148,6 +148,77 @@ a {
   box-shadow: 0 6px 18px rgba(220, 92, 69, 0.35);
 }
 
+.user-menu {
+  position: relative;
+}
+
+.user-menu summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--ink);
+  padding: 0.42rem 0.82rem;
+  border-radius: 999px;
+  border: 1px solid rgba(24, 32, 43, 0.14);
+  background: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+}
+
+.user-menu-trigger {
+  width: 46px;
+  height: 38px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-burger {
+  width: 17px;
+  display: grid;
+  gap: 3px;
+}
+
+.mini-burger span {
+  height: 2px;
+  border-radius: 999px;
+  background: #fff;
+  display: block;
+}
+
+.user-menu-name {
+  margin: 0 0 0.15rem;
+  padding: 0.25rem 0.45rem;
+  color: var(--ink);
+  font-weight: 800;
+  font-size: 0.84rem;
+  border-bottom: 1px solid rgba(24, 32, 43, 0.08);
+}
+
+.user-menu summary::-webkit-details-marker {
+  display: none;
+}
+
+.user-menu-popover {
+  position: absolute;
+  top: calc(100% + 0.55rem);
+  right: 0;
+  min-width: 210px;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.6rem;
+  border-radius: 14px;
+  border: 1px solid rgba(24, 32, 43, 0.12);
+  background: #fffdfa;
+  box-shadow: 0 12px 30px rgba(24, 32, 43, 0.12);
+  z-index: 120;
+}
+
+.user-menu-popover a {
+  display: block;
+  border-radius: 10px;
+}
+
 .nav-toggle {
   display: none;
   align-items: center;
@@ -1950,6 +2021,53 @@ textarea:focus {
     color: #fff;
     background: rgba(255, 255, 255, 0.08);
     border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .user-menu summary {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 250, 244, 0.95);
+    padding: 0.92rem 1rem;
+    text-align: center;
+  }
+
+  .user-menu-trigger {
+    width: 100%;
+    height: auto;
+    min-height: 48px;
+  }
+
+  .mini-burger {
+    width: 20px;
+    margin: 0 auto;
+  }
+
+  .user-menu-name {
+    color: rgba(255, 250, 244, 0.95);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    text-align: center;
+    padding: 0.35rem 0.5rem;
+  }
+
+  .user-menu-popover {
+    position: static;
+    min-width: 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0.35rem 0 0;
+  }
+
+  .user-menu-popover a {
+    color: rgba(255, 250, 244, 0.9);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 16px;
+    padding: 0.92rem 1rem;
+    text-align: center;
+    font-weight: 700;
   }
 
   .nav-cta {

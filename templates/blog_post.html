@@ -39,34 +39,7 @@
     </script>
   </head>
   <body>
-    <header class="site-header" id="top">
-      <div class="container nav-wrap">
-        <a href="/#top" class="brand" aria-label="vistawave home">
-          <img
-            class="brand-logo"
-            src="{{ url_for('static', filename='vistawave_logo.png') }}"
-            alt="vistawave logo"
-            loading="eager"
-          />
-        </a>
-        <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu">
-          <span class="sr-only">Menu</span>
-          <span class="nav-toggle-box" aria-hidden="true">
-            <span class="nav-toggle-line"></span>
-            <span class="nav-toggle-line"></span>
-            <span class="nav-toggle-line"></span>
-          </span>
-        </button>
-        <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
-          <a href="/#about">About</a>
-          <a href="/#services">Services</a>
-          <a href="/jobs">Careers</a>
-          <a href="/blog">Blog</a>
-          <a href="/#contact">Contact</a>
-          <a href="/#contact" class="nav-cta">Get Started</a>
-        </nav>
-      </div>
-    </header>
+    {% include "_site_header.html" %}
 
     <main>
       <article class="article-wrap">

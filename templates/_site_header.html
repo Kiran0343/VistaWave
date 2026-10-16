@@ -1,0 +1,45 @@
+<header class="site-header" id="top">
+  <div class="container nav-wrap">
+    <a href="/#top" class="brand" aria-label="vistawave home">
+      <img
+        class="brand-logo"
+        src="{{ url_for('static', filename='vistawave_logo.png') }}"
+        alt="vistawave logo"
+        loading="eager"
+      />
+    </a>
+    <button class="nav-toggle" aria-expanded="false" aria-controls="primary-nav" aria-label="Open navigation menu">
+      <span class="sr-only">Menu</span>
+      <span class="nav-toggle-box" aria-hidden="true">
+        <span class="nav-toggle-line"></span>
+        <span class="nav-toggle-line"></span>
+        <span class="nav-toggle-line"></span>
+      </span>
+    </button>
+    <nav id="primary-nav" class="primary-nav" aria-label="Main navigation">
+      <a href="/#about">About</a>
+      <a href="/#services">Services</a>
+      <a href="/jobs">Careers</a>
+      <a href="/blog">Blog</a>
+      <a href="/#contact">Contact</a>
+      {% if is_authenticated %}
+        <details class="user-menu" role="listbox">
+          <summary class="user-menu-trigger nav-cta" aria-label="Open account menu" title="Account">
+            <span class="mini-burger" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+            </span>
+          </summary>
+          <div class="user-menu-popover">
+            <p class="user-menu-name">{{ nav_user_name }}</p>
+            <a href="{{ url_for('timesheet_dashboard') }}">Timesheets</a>
+            <a href="{{ url_for('logout_user') }}" class="nav-cta">Sign out</a>
+          </div>
+        </details>
+      {% else %}
+        <a href="{{ url_for('auth_page', mode='login') }}" class="nav-cta">Sign In</a>
+      {% endif %}
+    </nav>
+  </div>
+</header>

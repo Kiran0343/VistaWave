@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In | vistawave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+      body {
+        background: linear-gradient(180deg, #f8f3ea 0%, #f3eee7 100%);
+      }
+      .auth-shell {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1.2rem 3rem;
+      }
+      .auth-card {
+        width: min(100%, 500px);
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(24,32,43,0.08);
+        border-radius: 26px;
+        box-shadow: 0 18px 40px rgba(24,32,43,0.08);
+        padding: 2rem 1.6rem;
+      }
+      .brand-auth {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 0.75rem;
+      }
+      .brand-logo-auth {
+        height: 120px;
+        width: auto;
+        margin: 0;
+      }
+      .auth-switcher {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.4rem;
+        padding: 0.35rem;
+        border-radius: 14px;
+        background: rgba(24,32,43,0.05);
+        margin-bottom: 1.25rem;
+      }
+      .auth-tab {
+        text-align: center;
+        padding: 0.7rem 0.8rem;
+        border-radius: 11px;
+        color: var(--muted, #5e6470);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .auth-tab.is-active {
+        background: rgba(255,255,255,0.92);
+        color: var(--ink, #18202b);
+      }
+      .auth-form {
+        display: grid;
+        gap: 0.9rem;
+      }
+      .auth-form h1 {
+        margin: 0;
+        font-size: 2rem;
+        letter-spacing: -0.04em;
+      }
+      .auth-copy {
+        margin: 0;
+        color: var(--muted, #5e6470);
+        line-height: 1.6;
+      }
+      .auth-form label {
+        display: grid;
+        gap: 0.4rem;
+        font-weight: 600;
+      }
+      .auth-form input {
+        width: 100%;
+        border: 1px solid rgba(24,32,43,0.12);
+        border-radius: 12px;
+        padding: 0.9rem 0.95rem;
+        font: inherit;
+        background: #fff;
+      }
+      .auth-form input:focus {
+        outline: 2px solid rgba(220, 92, 69, 0.18);
+        border-color: rgba(220,92,69,0.5);
+      }
+      .inline-actions {
+        display: flex;
+        justify-content: flex-end;
+      }
+      .inline-actions a {
+        color: var(--accent, #dc5c45);
+        font-weight: 700;
+        text-decoration: none;
+      }
+      .flash-stack {
+        display: grid;
+        gap: 0.7rem;
+        margin-bottom: 1rem;
+      }
+      .flash {
+        padding: 0.8rem 0.9rem;
+        border-radius: 12px;
+        font-weight: 600;
+      }
+      .flash-success {
+        background: rgba(34,197,94,0.08);
+        border: 1px solid rgba(34,197,94,0.18);
+        color: #166534;
+      }
+      .flash-error {
+        background: rgba(220,92,69,0.08);
+        border: 1px solid rgba(220,92,69,0.18);
+        color: #9a2f22;
+      }
+      .site-header .primary-nav {
+        position: static;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+      .site-header .nav-toggle {
+        display: none !important;
+      }
+      @media (max-width: 640px) {
+        .auth-card { padding: 1.3rem 1rem; }
+        .auth-form h1 { font-size: 1.7rem; }
+        .site-header .primary-nav {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 0.3rem;
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          padding: 0;
+        }
+        .site-header .primary-nav a {
+          color: var(--muted, #5e6470);
+          background: transparent;
+          border: none;
+          font-size: 0.9rem;
+          padding: 0.35rem 0.55rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include "_site_header.html" %}
+
+    <main class="auth-shell">
+      <div class="auth-card">
+        <div class="auth-brand-wrap">
+          <a href="/" class="brand-auth" aria-label="vistawave home">
+            <img class="brand-logo-auth" src="{{ url_for('static', filename='vistawave_logo.png') }}" alt="vistawave logo" />
+          </a>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="flash-stack" aria-live="polite">
+              {% for category, message in messages %}
+                <div class="flash flash-{{ category or 'info' }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="auth-switcher" role="tablist" aria-label="Authentication modes">
+          <a href="{{ url_for('auth_page', mode='login') }}" class="auth-tab {% if active_mode == 'login' %}is-active{% endif %}">Sign In</a>
+          <a href="{{ url_for('auth_page', mode='signup') }}" class="auth-tab {% if active_mode == 'signup' %}is-active{% endif %}">Sign Up</a>
+        </div>
+
+        {% if active_mode == 'signup' %}
+          <form class="auth-form" method="post" action="{{ url_for('register_user') }}">
+            <h1>Create account</h1>
+            <p class="auth-copy">Register your account and verify your email before access is granted.</p>
+            <label>
+              Full name
+              <input type="text" name="name" placeholder="Jane Consultant" required />
+            </label>
+            <label>
+              Work email
+              <input type="email" name="email" value="{{ email }}" placeholder="you@company.com" required />
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" placeholder="Minimum 6 characters" required />
+            </label>
+            <button type="submit" class="btn auth-btn" style="width:100%">Create account</button>
+          </form>
+        {% elif active_mode == 'verify' %}
+          <form class="auth-form" method="post" action="{{ url_for('verify_user') }}">
+            <h1>Verify email</h1>
+            <p class="auth-copy">Enter the passcode sent to your registered email address.</p>
+            <input type="hidden" name="email" value="{{ email }}" />
+            <label>
+              Email
+              <input type="email" value="{{ email }}" disabled />
+            </label>
+            <label>
+              Verification code
+              <input type="text" name="verification_code" placeholder="123456" inputmode="numeric" required />
+            </label>
+            <button type="submit" class="btn auth-btn" style="width:100%">Activate account</button>
+          </form>
+        {% elif active_mode == 'forgot' %}
+          <form class="auth-form" method="post" action="{{ url_for('request_password_reset') }}">
+            <h1>Forgot password</h1>
+            <p class="auth-copy">Enter your email and we will send a one-time password.</p>
+            <label>
+              Email address
+              <input type="email" name="email" value="{{ email }}" placeholder="you@company.com" required />
+            </label>
+            <button type="submit" class="btn auth-btn" style="width:100%">Send OTP</button>
+          </form>
+        {% elif active_mode == 'reset' %}
+          <form class="auth-form" method="post" action="{{ url_for('reset_password') }}">
+            <h1>Reset password</h1>
+            <p class="auth-copy">Use the one-time password from your email to set a new password.</p>
+            <input type="hidden" name="email" value="{{ email }}" />
+            <label>
+              Email
+              <input type="email" value="{{ email }}" disabled />
+            </label>
+            <label>
+              One-time password
+              <input type="text" name="reset_code" placeholder="123456" inputmode="numeric" required />
+            </label>
+            <label>
+              New password
+              <input type="password" name="new_password" placeholder="Enter new password" required />
+            </label>
+            <button type="submit" class="btn auth-btn" style="width:100%">Update password</button>
+          </form>
+        {% else %}
+          <form class="auth-form" method="post" action="{{ url_for('login_user') }}">
+            <h1>Sign in</h1>
+            <p class="auth-copy">Access your consulting portal account and manage monthly timesheets.</p>
+            <label>
+              Email address
+              <input type="email" name="email" value="{{ email }}" placeholder="you@company.com" required />
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" placeholder="Enter password" required />
+            </label>
+            <div class="inline-actions">
+              <a href="{{ url_for('auth_page', mode='forgot') }}">Forgot password?</a>
+            </div>
+            <button type="submit" class="btn auth-btn" style="width:100%">Sign in</button>
+          </form>
+        {% endif %}
+      </div>
+    </main>
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

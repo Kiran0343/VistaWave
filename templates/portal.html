@@ -1,0 +1,564 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consultant Portal | vistawave</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,500;9..144,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='vistawave_logo.svg') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+      body {
+        background: linear-gradient(180deg, #f8f3ea 0%, #f4efe7 100%);
+        height: 100vh;
+        overflow: hidden;
+      }
+      html {
+        height: 100%;
+      }
+      .site-header .brand-logo {
+        height: 118px;
+        margin: -20px -14px;
+      }
+      .site-header .nav-wrap {
+        min-height: 56px;
+      }
+      .portal-shell {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0.65rem 0.75rem 0.8rem;
+        height: calc(100dvh - 120px);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+      .portal-header {
+        background: rgba(248,243,234,0.9);
+        border-bottom: 1px solid rgba(24,32,43,0.1);
+      }
+      .portal-header-inner {
+        max-width: 1040px;
+        margin: 0 auto;
+        padding: 0.65rem 0.75rem 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+      }
+      .portal-header h1 {
+        margin: 0.15rem 0 0;
+        font-size: clamp(1.25rem, 1.9vw, 1.7rem);
+        letter-spacing: -0.04em;
+      }
+      .portal-grid {
+        display: grid;
+        grid-template-columns: minmax(220px, 300px) minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: start;
+        flex: 1;
+        min-height: 0;
+      }
+      .portal-left-col {
+        display: grid;
+        gap: 0.8rem;
+        height: 100%;
+        min-height: 0;
+      }
+      .portal-panel {
+        background: rgba(255,255,255,0.82);
+        border: 1px solid rgba(24,32,43,0.08);
+        border-radius: 18px;
+        box-shadow: 0 18px 36px rgba(24,32,43,0.06);
+        padding: 0.75rem;
+        min-height: 0;
+      }
+      .portal-panel h2 {
+        margin: 0 0 0.4rem;
+        font-size: 1.05rem;
+      }
+      .portal-form,
+      .timesheet-form {
+        display: grid;
+        gap: 0.5rem;
+      }
+      .portal-form label,
+      .timesheet-form label {
+        display: grid;
+        gap: 0.45rem;
+        font-weight: 600;
+      }
+      .portal-form input,
+      .timesheet-form input,
+      .timesheet-form select {
+        width: 100%;
+        border: 1px solid rgba(24,32,43,0.12);
+        border-radius: 12px;
+        padding: 0.56rem 0.62rem;
+        font: inherit;
+        font-size: 0.9rem;
+        background: rgba(255,255,255,0.95);
+      }
+      .panel-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.5rem 0.72rem;
+        border-radius: 999px;
+        background: rgba(34,197,94,0.08);
+        color: #166534;
+        font-size: 0.7rem;
+        letter-spacing: 0.05em;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+      .selector-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0.5rem 0 0.6rem;
+      }
+      .selector-box {
+        flex: 1 1 150px;
+      }
+      .timesheet-table-wrap {
+        overflow: hidden;
+      }
+      .week-selector-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+      }
+      .week-nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.55rem;
+        flex-wrap: wrap;
+      }
+      .week-selector-row label {
+        font-weight: 700;
+      }
+      .week-selector-row select {
+        min-width: 150px;
+      }
+      .week-nav-btn {
+        border: 1px solid rgba(24,32,43,0.14);
+        background: rgba(255,255,255,0.95);
+        color: #18202b;
+        border-radius: 10px;
+        padding: 0.46rem 0.62rem;
+        font: inherit;
+        font-weight: 700;
+        font-size: 0.83rem;
+        cursor: pointer;
+      }
+      .week-nav-btn:disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+      .weeks-stack {
+        display: grid;
+        gap: 0.55rem;
+      }
+      .week-block {
+        border: 1px solid rgba(24,32,43,0.08);
+        border-radius: 12px;
+        padding: 0.48rem;
+        background: rgba(255,255,255,0.75);
+        display: none;
+      }
+      .week-block.is-active {
+        display: block;
+      }
+      .week-block h3 {
+        margin: 0 0 0.4rem;
+        font-size: 0.84rem;
+        letter-spacing: 0.01em;
+      }
+      .week-grid {
+        display: grid;
+        grid-template-columns: repeat(7, minmax(0, 1fr));
+        gap: 0.35rem;
+      }
+      .day-card {
+        border: 1px solid rgba(24,32,43,0.1);
+        border-radius: 10px;
+        padding: 0.34rem;
+        background: #fff;
+      }
+      .day-card.is-empty {
+        background: rgba(24,32,43,0.03);
+        border-style: dashed;
+      }
+      .day-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 0.25rem;
+      }
+      .day-number {
+        font-weight: 800;
+        color: #18202b;
+        font-size: 0.78rem;
+      }
+      .day-name {
+        color: #5e6470;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+      }
+      .timesheet-total {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-top: 0.42rem;
+        padding-top: 0.42rem;
+        border-top: 1px solid rgba(24,32,43,0.08);
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+      .history-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.55rem;
+      }
+      .history-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.7rem;
+        border: 1px solid rgba(24,32,43,0.08);
+        border-radius: 12px;
+        padding: 0.45rem 0.55rem;
+        background: rgba(255,255,255,0.78);
+      }
+      .history-link {
+        color: #18202b;
+        font-weight: 700;
+      }
+      .history-meta {
+        color: #5e6470;
+        font-size: 0.78rem;
+      }
+      .flash-stack {
+        display: grid;
+        gap: 0.5rem;
+        margin-bottom: 0.45rem;
+      }
+      .flash {
+        border-radius: 12px;
+        padding: 0.5rem 0.62rem;
+        font-weight: 600;
+        font-size: 0.88rem;
+      }
+      .flash-success {
+        background: rgba(34,197,94,0.08);
+        border: 1px solid rgba(34,197,94,0.18);
+        color: #166534;
+      }
+      .flash-error {
+        background: rgba(220,92,69,0.08);
+        border: 1px solid rgba(220,92,69,0.18);
+        color: #9a2f22;
+      }
+      .site-header .primary-nav {
+        position: static;
+        opacity: 1;
+        transform: none;
+        pointer-events: auto;
+      }
+      .site-header .nav-toggle {
+        display: none !important;
+      }
+      .portal-left-col .portal-panel {
+        overflow: auto;
+      }
+      .portal-grid > .portal-panel {
+        overflow: auto;
+      }
+
+      .portal-grid > .portal-panel .timesheet-form {
+        min-height: 0;
+      }
+
+      @media (max-height: 860px) {
+        .portal-shell {
+          padding: 0.45rem 0.6rem 0.65rem;
+          height: calc(100dvh - 104px);
+        }
+        .portal-panel {
+          padding: 0.62rem;
+        }
+        .day-card {
+          padding: 0.28rem;
+        }
+        .day-name {
+          font-size: 0.58rem;
+        }
+        .portal-form input,
+        .timesheet-form input,
+        .timesheet-form select {
+          padding: 0.48rem 0.54rem;
+        }
+      }
+
+      @media (max-width: 760px) {
+        body {
+          height: auto;
+          overflow: auto;
+        }
+        .portal-grid { grid-template-columns: 1fr; }
+        .portal-shell {
+          height: auto;
+          overflow: visible;
+          padding: 1rem 0.85rem 1.25rem;
+        }
+        .portal-header-inner, .panel-head { flex-direction: column; align-items: flex-start; }
+        .selector-row { flex-direction: column; }
+        .week-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .day-name { font-size: 0.68rem; }
+        .portal-form input,
+        .timesheet-form input,
+        .timesheet-form select { padding: 0.7rem 0.75rem; }
+        .site-header .primary-nav {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: flex-end;
+          gap: 0.3rem;
+          background: transparent;
+          border: none;
+          box-shadow: none;
+          padding: 0;
+        }
+        .site-header .primary-nav a {
+          color: var(--muted, #5e6470);
+          background: transparent;
+          border: none;
+          font-size: 0.9rem;
+          padding: 0.35rem 0.55rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    {% include "_site_header.html" %}
+
+    <header class="portal-header">
+      <div class="portal-header-inner">
+        <div>
+          <p class="eyebrow" style="margin:0 0 0.2rem; color: var(--accent, #dc5c45); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 800;">Consulting portal</p>
+          <h1>Welcome, {{ user.name if user and user.name else 'Consultant' }}</h1>
+        </div>
+      </div>
+    </header>
+
+    <main class="portal-shell">
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="flash-stack" aria-live="polite">
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category or 'info' }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="portal-grid">
+        <aside class="portal-left-col">
+          <section class="portal-panel">
+            <h2>Profile</h2>
+            <form method="post" action="{{ url_for('update_profile') }}" class="portal-form">
+              <label>
+                Full name
+                <input type="text" name="name" value="{{ user.name if user and user.name else '' }}" required />
+              </label>
+              <label>
+                Job title
+                <input type="text" name="title" value="{{ user.title if user and user.title else '' }}" placeholder="Senior Consultant" />
+              </label>
+              <label>
+                Department
+                <input type="text" name="department" value="{{ user.department if user and user.department else '' }}" placeholder="Delivery / Data / Cloud" />
+              </label>
+              <label>
+                Phone
+                <input type="tel" name="phone" value="{{ user.phone if user and user.phone else '' }}" placeholder="(555) 123-4567" />
+              </label>
+              <button type="submit" class="btn">Save profile</button>
+            </form>
+          </section>
+
+          <section class="portal-panel">
+            <h2>Previous Timesheets</h2>
+            {% if timesheet_history %}
+              <ul class="history-list">
+                {% for item in timesheet_history %}
+                  <li class="history-item">
+                    <a class="history-link" href="{{ url_for('timesheet_dashboard', year=item.year, month=item.month, week=1) }}">{{ item.month_name }} {{ item.year }}</a>
+                    <span class="history-meta">{{ '%.2f'|format(item.total_hours) }} hrs</span>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="history-meta" style="margin:0;">No previous submissions yet.</p>
+            {% endif %}
+          </section>
+        </aside>
+
+        <section class="portal-panel">
+          <div class="panel-head">
+            <div>
+              <p class="eyebrow" style="margin:0 0 0.2rem; color: var(--accent, #dc5c45); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.72rem; font-weight: 800;">Monthly submission</p>
+              <h2>Timesheet hours</h2>
+            </div>
+            <span class="status-pill">Saved monthly</span>
+          </div>
+
+          <form method="get" action="{{ url_for('timesheet_dashboard') }}" class="timesheet-form" style="margin-top:1rem;">
+            <p style="margin:0; font-weight:700; color:#18202b;">Select timesheet month and year</p>
+            <div class="selector-row">
+              <div class="selector-box">
+                <label>
+                  Year
+                  <select name="year">
+                    {% for year in year_options %}
+                      <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+              <div class="selector-box">
+                <label>
+                  Month
+                  <select name="month">
+                    {% for month in month_options %}
+                      <option value="{{ month }}" {% if month == selected_month %}selected{% endif %}>{{ ['January','February','March','April','May','June','July','August','September','October','November','December'][month-1] }}</option>
+                    {% endfor %}
+                  </select>
+                </label>
+              </div>
+              <div class="selector-box" style="display:flex; align-items:flex-end; min-width: 150px;">
+                <button type="submit" class="btn" style="width:100%;">Load month</button>
+              </div>
+            </div>
+          </form>
+
+          <form method="post" action="{{ url_for('submit_timesheet') }}" class="timesheet-form">
+            <input type="hidden" name="selected_year" value="{{ selected_year }}" />
+            <input type="hidden" name="selected_month" value="{{ selected_month }}" />
+            <div class="week-selector-row">
+              <label for="weekJump">Week selection</label>
+              <div class="week-nav-controls">
+                <button type="button" id="prevWeekBtn" class="week-nav-btn">Prev Week</button>
+                <select id="weekJump">
+                  {% for option in week_options %}
+                    <option value="week-{{ option.index }}" {% if option.index == active_week %}selected{% endif %}>{{ option.label }}</option>
+                  {% endfor %}
+                </select>
+                <button type="button" id="nextWeekBtn" class="week-nav-btn">Next Week</button>
+              </div>
+            </div>
+            <div class="timesheet-table-wrap">
+              <div class="weeks-stack">
+                {% for week in weeks %}
+                  <section class="week-block {% if loop.index == active_week %}is-active{% endif %}" id="week-{{ loop.index }}">
+                    <h3>Week {{ loop.index }}</h3>
+                    <div class="week-grid">
+                      {% for row in week %}
+                        {% if row %}
+                          <div class="day-card">
+                            <div class="day-card-head">
+                              <span class="day-number">{{ row.day }}</span>
+                              <span class="day-name">{{ row.label }}</span>
+                            </div>
+                            <input
+                              type="number"
+                              min="0"
+                              max="24"
+                              step="0.25"
+                              name="hours_{{ selected_year }}_{{ selected_month }}_{{ row.day }}"
+                              value="{{ '%.2f'|format(row.hours) if row.hours else '0.00' }}"
+                              placeholder="0.00"
+                            />
+                          </div>
+                        {% else %}
+                          <div class="day-card is-empty" aria-hidden="true"></div>
+                        {% endif %}
+                      {% endfor %}
+                    </div>
+                  </section>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="timesheet-total">
+              <span>Total hours for {{ month_name }} {{ selected_year }}</span>
+              <span>{{ '%.2f'|format(total_hours) }} hrs</span>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end;">
+              <button type="submit" class="btn">Save timesheet</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+    <script defer src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      const weekJump = document.getElementById('weekJump');
+      if (weekJump) {
+        const allWeekBlocks = Array.from(document.querySelectorAll('.week-block'));
+        const prevWeekBtn = document.getElementById('prevWeekBtn');
+        const nextWeekBtn = document.getElementById('nextWeekBtn');
+        const setWeek = (weekId) => {
+          allWeekBlocks.forEach((block) => {
+            block.classList.toggle('is-active', block.id === weekId);
+          });
+
+          const currentIndex = weekJump.selectedIndex;
+          if (prevWeekBtn) {
+            prevWeekBtn.disabled = currentIndex <= 0;
+          }
+          if (nextWeekBtn) {
+            nextWeekBtn.disabled = currentIndex >= weekJump.options.length - 1;
+          }
+        };
+
+        const jumpBy = (delta) => {
+          const newIndex = weekJump.selectedIndex + delta;
+          if (newIndex < 0 || newIndex >= weekJump.options.length) {
+            return;
+          }
+          weekJump.selectedIndex = newIndex;
+          setWeek(weekJump.value);
+        };
+
+        setWeek(weekJump.value);
+        weekJump.addEventListener('change', (event) => {
+          setWeek(event.target.value);
+        });
+
+        if (prevWeekBtn) {
+          prevWeekBtn.addEventListener('click', () => jumpBy(-1));
+        }
+        if (nextWeekBtn) {
+          nextWeekBtn.addEventListener('click', () => jumpBy(1));
+        }
+      }
+    </script>
+  </body>
+</html>
